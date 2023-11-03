@@ -17,7 +17,11 @@ eps = 1.0e-8 # Tolerance to which we require point on field line known for field
 hmin = 0.0 # Minimum step length for fieldline3D
 hmax = 1.0 # Maximum step length for fieldline3D
 
-data = get_data.get_magnetogram('Analytic_boundary_data.sav')
+#data = get_data.get_magnetogram('Analytic_boundary_data.sav')
+
+data = get_data.get_magnetogram('RMHD_boundary_data.sav')
+
+#BFieldvec_Seehafer = np.load('field_data_potential.npy') 
 
 data_bx = data[0] 
 data_by = data[1]  
@@ -36,19 +40,18 @@ ymax = data[13]
 zmin = data[14]
 zmax = data[15]
 
-plot_magnetogram.plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
+#plot_magnetogram.plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
 data_bz_Seehafer = Seehafer.mirror_magnetogram(data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y)
 
-plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2*nresol_x, 2*nresol_y)
+#plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2*nresol_x, 2*nresol_y)
 
 #plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
-B_Seehafer = BField_model.get_magnetic_field(data_bz_Seehafer, z0, deltaz, a, b, alpha, -xmax, xmax, -ymax, ymax, zmin, zmax, nresol_x, nresol_y, nresol_y, pixelsize_x, pixelsize_y, nf_max)
+B_Seehafer = BField_model.get_magnetic_field(data_bz_Seehafer, z0, deltaz, a, b, alpha, -xmax, xmax, -ymax, ymax, zmin, zmax, nresol_x, nresol_y, nresol_z, pixelsize_x, pixelsize_y, nf_max)
 
-b_back_test = np.zeros((2*nresol_y, 2*nresol_x))
-b_back_test = B_Seehafer[:, :, 0, 2]
-
+#b_back_test = np.zeros((2*nresol_y, 2*nresol_x))
+#b_back_test = B_Seehafer[:, :, 0, 2]
 #plot_magnetogram.plot_magnetogram_boundary_3D(b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
 plot_magnetogram.plot_fieldlines_grid(B_Seehafer, h1, hmin, hmax, eps, nresol_x, nresol_y, nresol_z, -xmax, xmax, -ymax, ymax, zmin, zmax)
