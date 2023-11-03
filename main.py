@@ -40,7 +40,7 @@ a = 0.0
 alpha = 0.0 
 b = 1.0
 
-T_photosphere = 5600.0      # temperature photosphere in Kelvin
+T_photosphere = 5600.0         # temperature photosphere in Kelvin
 T_corona      = 2.0*10.0**6.0  # temperature corona in Kelvin
 
 h1 = 0.0001  # Initial step length for fieldline3D
