@@ -40,6 +40,7 @@ def plot_magnetogram_boundary_3D(
     ax.set_zlabel("z")
     ax.set_zlim([zmin, zmax])
     ax.view_init(30, 245)
+    ax.set_box_aspect((xmax, ymax, 1))
     plt.show()
 
 
@@ -89,6 +90,7 @@ def plot_fieldlines_grid(
     ax.view_init(90, 270)
     ax.set_box_aspect((xmax, ymax, 1))
 
+    # Analytical ISSI
     nlinesmaxx = 10
     nlinesmaxy = 10
     x_0 = 0.00000001
@@ -96,7 +98,16 @@ def plot_fieldlines_grid(
     dx = 0.1
     dy = 0.1
 
+    # RMHD ISSI
     nlinesmaxx = 40
+    nlinesmaxy = 20
+    x_0 = 0.0
+    y_0 = 0.0
+    dx = 0.05
+    dy = 0.05
+
+    # SOAR FITS
+    nlinesmaxx = 32
     nlinesmaxy = 20
     x_0 = 0.0
     y_0 = 0.0
@@ -161,7 +172,7 @@ def plot_fieldlines_grid(
 
     current_time = datetime.datetime.now()
     dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
-
+    """
     plotname = (
         "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
         + str(a)
@@ -176,4 +187,5 @@ def plot_fieldlines_grid(
         + ".png"
     )
     plt.savefig(plotname, dpi=300)
+    """
     plt.show()
