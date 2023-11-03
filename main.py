@@ -45,7 +45,7 @@ z0 = 0.4                    # Where transition from NFF to FF takes place
 deltaz = z0/10.0            # Width of transitional region
 
 T_photosphere = 5600.0      # temperature photosphere in Kelvin
-T_corona      = 2.0*10.0^6  # temperature corona in Kelvin
+T_corona      = 2.0*10.0**6.0  # temperature corona in Kelvin
 
 T0 = (T_photosphere + T_corona*np.tanh(z0/deltaz))/(1.0+np.tanh(z0/deltaz))
 T1 = (T_corona - T_photosphere)/(1.0+np.tanh(z0/deltaz))
@@ -56,7 +56,7 @@ H =  1.3807*T0/(mbar*1.6726*g_solar) *0.001
 rho0  = 3.0-4               # photospheric mass density in kg/m^3
 B0    = 500.0               # normalising photospheric B-field in Gauss
 p0    = 1.3807*T_photosphere*rho0/(mbar*1.6726)*1.0     # photospheric plasma pressure in Pascal 
-pB0   = 3.9789-3*B0^2       # photospheric magnetic pressure in Pascal
+pB0   = 3.9789-3*B0**2.0       # photospheric magnetic pressure in Pascal
 beta0 = p0/pB0              # photospheric plasma beta
 
 h1 = 0.0001 # Initial step length for fieldline3D
