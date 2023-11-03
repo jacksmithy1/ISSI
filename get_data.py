@@ -2,6 +2,12 @@ import scipy
 import numpy as np
 import math
 
+# TO DO
+# Need to split def prep_ISSI_data from get_magnetogram or sth like that
+# Need to decide on general format we want data to be given, probably as
+# Bx = np.array(ny, nx) and By = np.array(ny, nx) at z = 0 (Photosphere)
+# Additionally need pixelsize in km
+
 def get_magnetogram(path):
     data = scipy.io.readsav(path, python_dict=True, verbose=True)
 
