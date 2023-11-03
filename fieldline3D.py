@@ -11,6 +11,7 @@ import numpy as np
 from math import sqrt, floor
 import time  
 from datetime import datetime  
+#from numba import njit, float64 as f64, void, boolean
 
 # rkf45 coefficients
 b2 = 0.25
@@ -25,6 +26,7 @@ n1, n3, n4, n5 = 25/216, 1408/2565, 2197/4104, -1/5
 # used to determine y_i+1 from y_i if using rkf54 (5th order)
 nn1, nn3, nn4, nn5, nn6 = 16/135, 6656/12825, 28561/56430, -9/50, 2/55
 
+#@njit
 def trilinear3d(pt, grid, xx, yy, zz):
     """
     Given a point, pt, in the grid with dimensions xx, yy and zz,
@@ -43,12 +45,15 @@ def trilinear3d(pt, grid, xx, yy, zz):
     line = (1 - y)*square[0, :, ...] + y*square[1, :, ...]
     return (1 - z)*line[0, ...] + z*line[1, ...]
 
+#@njit
 def trilinear3d_grid(pt, grid):
     """
     Given a point, pt, in grid coordinates in the grid,
     returns the value of grid under the trilinear assumption.
     """
     
+    #print('pt', pt)
+    #print('grid', grid)
     ix = floor(pt[0])
     iy = floor(pt[1])
     iz = floor(pt[2])
@@ -56,18 +61,23 @@ def trilinear3d_grid(pt, grid):
     x = pt[0] - ix
     y = pt[1] - iy
     z = pt[2] - iz
-    
+    #print('ix,iy,iz', ix, iy, iz)
+    #print('x,y,z', x, y, z)
     cube = grid[ix:ix+2, iy:iy+2, iz:iz+2, ...]
+    #print('cube', cube)
     square = (1 - x)*cube[0, :, :, ...] + x*cube[1, :, :, ...]
+    #print('square', square)
     line = (1 - y)*square[0, :, ...] + y*square[1, :, ...]
-
+    #print('line', line)
     return (1 - z)*line[0, ...] + z*line[1, ...]
 
+#@njit
 def getdr(r, x, y, z, csystem):
     """
     Returns the infinitesimal line element at a point, r, in the correct coordinate system.
     """
     
+    #print('r in getdr', r)
     ix = floor(r[0])
     iy = floor(r[1])
     iz = floor(r[2])
@@ -87,6 +97,7 @@ def getdr(r, x, y, z, csystem):
         dr = np.array([dx, xp*dy, dz], dtype=np.float64)
     return dr
 
+#@njit
 def gtr(pt, x, y, z):
     """
     Converts a point from grid coordinates to real coordinates.
@@ -103,11 +114,17 @@ def gtr(pt, x, y, z):
     pt[1] = y[iy] + (pt[1] - iy)*(y[iy+1] - y[iy])
     pt[2] = z[iz] + (pt[2] - iz)*(z[iz+1] - z[iz])
 
+#@njit
 def edgecheck(r, minmax, csystem, periodicity):
     """
     Checks whether a point, r, has exited the grid through a periodic boundary and if so, moves the point back into the grid using the periodicity.
     """
     
+    #print('In edgecheck')
+    #print('r', r)
+    #print('minmax', minmax)
+    #print('periodicity', periodicity)
+    #print('csystem', csystem)
     if np.any(periodicity):
         # spherical
         if csystem[2]:
@@ -147,10 +164,16 @@ def edgecheck(r, minmax, csystem, periodicity):
                 if r[1] < minmax[2]: r[1] = r[1] + (minmax[3] - minmax[2])
                 if r[1] > minmax[3]: r[1] = r[1] - (minmax[3] - minmax[2])
 
+#@njit
 def outedge(r, minmax_box, csystem, periodicity):
     """
     Checks whether a point, r, has left the domain.
     """
+    #print('In outedge')
+    #print('checking point', r)
+    #print('minmax_box', minmax_box)
+    #print('periodicity', periodicity)
+    #print('csystem', csystem)
     
     if np.any(periodicity):
         # cartesian
@@ -159,12 +182,15 @@ def outedge(r, minmax_box, csystem, periodicity):
             # if no x periodicity
             if not periodicity[0]:
                 outedge = outedge or r[0] >= minmax_box[1] or r[0] <= minmax_box[0]
+                #print('outedge1', outedge)
             # if no y periodicity
             if not periodicity[1]:
                 outedge = outedge or r[1] >= minmax_box[3] or r[1] <= minmax_box[2]
+                #print('outedge2', outedge)
             # if no z periodicity
             if not periodicity[2]:
                 outedge = outedge or r[2] >= minmax_box[5] or r[2] <= minmax_box[4]
+                #print('outedge3', outedge)
         # spherical
         elif csystem[2]:
             outedge = r[0] >= minmax_box[1] or r[0] <= minmax_box[0]
@@ -182,10 +208,15 @@ def outedge(r, minmax_box, csystem, periodicity):
                 outedge = outedge or r[1] >= minmax_box[3] or r[1] <= minmax_box[2]
     else:
         outedge = r[0] >= minmax_box[1] or r[0] <= minmax_box[0] or r[1] >= minmax_box[3] or r[1] <= minmax_box[2] or r[2] >= minmax_box[5] or r[2] <= minmax_box[4]
+        
+        
+    #for i in r:
+    #    if np.isnan(i):
+    #        outedge = True
                 
     return outedge
 
-
+#@njit
 def rkf45(r0, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints, oneway,
     stop_criteria, t_max, minmax, minmax_box, csystem, periodicity):
     """
@@ -200,6 +231,8 @@ def rkf45(r0, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints, oneway,
         count = 1
         out = False
         bounce = False
+        
+        #print('maxpoints', maxpoints)
 
         while count < maxpoints:
 
@@ -212,47 +245,65 @@ def rkf45(r0, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints, oneway,
             rt = r0
             b = trilinear3d_grid(rt, bgrid)
             k1 = hvec*b/sqrt(np.sum(b**2))
+            #print("b, k1", b, k1)
             
             rt = r0 + b2*k1
             
+            #print('rt1', rt)
+            
+            #print('r0, rt, minmax_box', r0, rt, minmax_box)
+            
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop1')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k2 = hvec*b/sqrt(np.sum(b**2))
             rt = r0 + b3*k1 + c3*k2
+            
+            #print('rt2', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop2')
                 break
             
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k3 = hvec*b/sqrt(np.sum(b**2))
             rt = r0 + b4*k1 + c4*k2 + d4*k3
+            
+            #print('rt3', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop3')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k4 = hvec*b/sqrt(np.sum(b**2))
             rt = r0 + b5*k1 + c5*k2 + d5*k3 + e5*k4
+            
+            #print('rt4', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop3')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k5 = hvec*b/sqrt(np.sum(b**2))
             rt = r0 + b6*k1 + c6*k2 + d6*k3 + e6*k4 + f6*k5
+            
+            #print('rt5', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop4')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
@@ -283,46 +334,64 @@ def rkf45(r0, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints, oneway,
             b = trilinear3d_grid(rt, bgrid)
             k1 = thvec*b/sqrt(np.sum(b**2))
             rt = r0 + b2*k1
+            
+            #print('rt6', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop5')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k2 = thvec*b/sqrt(np.sum(b**2))
             rt = r0 + b3*k1 + c3*k2
+            
+            #print('rt7', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop6')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k3 = thvec*b/sqrt(np.sum(b**2))
             rt = r0 + b4*k1 + c4*k2 + d4*k3
+            
+            #print('rt8', rt)
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop7')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
             k4 = thvec*b/sqrt(np.sum(b**2))
             rt = r0 + b5*k1 + c5*k2 + d5*k3 + e5*k4
+            
+            #print('rt9', rt)
+            #print(outedge(rt, minmax_box, csystem, periodicity))
 
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+                #print('stop8')
                 break
 
             edgecheck(rt, minmax, csystem, periodicity)
             b = trilinear3d_grid(rt, bgrid)
+            #print('b',b)
             k5 = thvec*b/sqrt(np.sum(b**2))
             rt = r0 + n1*k1 + n3*k3 + n4*k4 + n5*k5
+            #print('rt10', rt)
             edgecheck(rt, minmax, csystem, periodicity)
+            
+            #print(outedge(rt, minmax_box, csystem, periodicity))
             
             if outedge(rt, minmax_box, csystem, periodicity):
                 out = True
+            #    #print('stop9')
                 break
 
             count += 1
@@ -335,12 +404,14 @@ def rkf45(r0, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints, oneway,
                     dl = line[-1] - line[-2]
                     mdl = sqrt(np.sum(dl**2))
                     if mdl < hmin/2:
+                        #print('stop10')
                         break
 
                     dl = line[-1] - line[-3]
                     mdl = sqrt(np.sum(dl**2))
                     if mdl < hmin/2:
                         bounce = True
+                        #print('stop11')
                         break
         
         # move exited point back to boundary of box
@@ -428,16 +499,23 @@ def fieldline3d(startpt, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints=50000
     
     # define edges of box
     minmax = np.array([0, x.shape[0]-1, 0, y.shape[0]-1, 0, z.shape[0]-1], dtype=np.float64)
-
+    
+    #print('minmax', minmax)
+    #minmax = np.array([-1, 1, -1, 1, 0, 1.5], dtype=np.float64)
     if boxedge is not None:
         periodicity[:] = False
         boxedge1 = boxedge.copy()
         if not gridcoord:
             for idim, dim in enumerate([x, y, z]):
+                #print('idim, dim', idim, dim)
                 for im in range(2):
+                    #print('im', im)
                     index = np.argwhere(boxedge[im, idim] >= dim).max()-1
+                    #print('index', index)
                     boxedge1[im, idim] = index + (boxedge[im, idim] - dim[index])/(dim[index+1] - dim[index])
+                    #print('New boxedge[im, idim]', boxedge1[im, idim])
         
+        #print('boxedge1', boxedge1)
         minmax_box = np.array([
             max([boxedge1[0, 0], minmax[0]]),
             min([boxedge1[1, 0], minmax[1]]),
@@ -449,6 +527,12 @@ def fieldline3d(startpt, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints=50000
     else:
         minmax_box = minmax
 
+    #print('bpxedge', boxedge)
+    #print('bpxedge1', boxedge1)
+    #print('minmax', minmax)
+    #print('minmax_box', minmax_box)
+    #exit()
+    #print('startpt', startpt)
     # first convert point into grid coordinates
     if not gridcoord:
         ix = np.argwhere(startpt[0] >= x).max()
@@ -463,6 +547,8 @@ def fieldline3d(startpt, bgrid, x, y, z, h, hmin, hmax, epsilon, maxpoints=50000
     else:
         r0 = startpt.copy()
 
+    #print('minmax_box', minmax_box)
+    #print('r0', r0)
     # Produce an error if the first point isn't in the box
     if (r0[0] < minmax_box[0] or r0[0] > minmax_box[1] or 
         r0[1] < minmax_box[2] or r0[1] > minmax_box[3] or 
