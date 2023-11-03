@@ -11,6 +11,7 @@ import numpy as np
 from math import sqrt, floor
 import time
 from datetime import datetime
+from numba import njit
 
 # from numba import njit, float64 as f64, void, boolean
 
@@ -28,7 +29,7 @@ n1, n3, n4, n5 = 25 / 216, 1408 / 2565, 2197 / 4104, -1 / 5
 nn1, nn3, nn4, nn5, nn6 = 16 / 135, 6656 / 12825, 28561 / 56430, -9 / 50, 2 / 55
 
 
-# @njit
+@njit
 def trilinear3d(pt, grid, xx, yy, zz):
     """
     Given a point, pt, in the grid with dimensions xx, yy and zz,
@@ -48,7 +49,7 @@ def trilinear3d(pt, grid, xx, yy, zz):
     return (1 - z) * line[0, ...] + z * line[1, ...]
 
 
-# @njit
+@njit
 def trilinear3d_grid(pt, grid):
     """
     Given a point, pt, in grid coordinates in the grid,
@@ -75,7 +76,7 @@ def trilinear3d_grid(pt, grid):
     return (1 - z) * line[0, ...] + z * line[1, ...]
 
 
-# @njit
+@njit
 def getdr(r, x, y, z, csystem):
     """
     Returns the infinitesimal line element at a point, r, in the correct coordinate system.
@@ -102,7 +103,7 @@ def getdr(r, x, y, z, csystem):
     return dr
 
 
-# @njit
+@njit
 def gtr(pt, x, y, z):
     """
     Converts a point from grid coordinates to real coordinates.
@@ -123,7 +124,7 @@ def gtr(pt, x, y, z):
     pt[2] = z[iz] + (pt[2] - iz) * (z[iz + 1] - z[iz])
 
 
-# @njit
+@njit
 def edgecheck(r, minmax, csystem, periodicity):
     """
     Checks whether a point, r, has exited the grid through a periodic boundary and if so, moves the point back into the grid using the periodicity.
@@ -186,7 +187,7 @@ def edgecheck(r, minmax, csystem, periodicity):
                     r[1] = r[1] - (minmax[3] - minmax[2])
 
 
-# @njit
+@njit
 def outedge(r, minmax_box, csystem, periodicity):
     """
     Checks whether a point, r, has left the domain.
@@ -250,7 +251,7 @@ def outedge(r, minmax_box, csystem, periodicity):
     return outedge
 
 
-# @njit
+@njit
 def rkf45(
     r0,
     bgrid,

@@ -122,11 +122,11 @@ B_Seehafer = BField_model.get_magnetic_field(
 
 current_time = datetime.datetime.now()
 
-print(current_time - start)
 dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
 path = (
-    "/Users/lilli/Desktop/ISSI_data/field_data_"
+    # "/Users/lilli/Desktop/ISSI_data/field_data_"
+    "./"
     + str(a)
     + "_"
     + str(b)
@@ -134,8 +134,6 @@ path = (
     + str(alpha)
     + "_"
     + str(nf_max)
-    + "_"
-    + dt_string
     + ".npy"
 )
 
@@ -166,3 +164,7 @@ plot_magnetogram.plot_fieldlines_grid(
     alpha,
     nf_max,
 )
+
+end = datetime.datetime.now()
+
+print(end - start)
