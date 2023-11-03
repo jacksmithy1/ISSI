@@ -1,5 +1,6 @@
 import scipy
 import numpy as np
+import math
 
 def get_magnetogram(path):
     data = scipy.io.readsav(path, python_dict=True, verbose=True)
@@ -24,6 +25,8 @@ def get_magnetogram(path):
     #print(data['info_boundary'])
     print(data['info_array'])
 
+    pixelsize = float(input('Pixelsize in km?'))
+
     bx_xlen = data_bx.shape[1]
     bx_ylen = data_bx.shape[0]
     by_xlen = data_by.shape[1]
@@ -41,22 +44,46 @@ def get_magnetogram(path):
         nresol_x = bx_xlen # Data resolution in x direction
         nresol_y = bx_ylen # Data resolution in y direction
 
-    #nresol_z = scale_height.shape[0]
-    nresol_z = 652
-  
-    ymin = 0.0 # Minimum value of y in data length scale, not in Mm
-    ymax = 1.0 # Maximum value of y in data length scale, not in Mm
+    L = 1.0
+
     xmin = 0.0 # Minimum value of x in data length scale, not in Mm
-    xmax = nresol_x/nresol_y # Maximum value of x in data length scale, not in Mm
+    ymin = 0.0 # Minimum value of y in data length scale, not in Mm
     zmin = 0.0 # Minimum value of z in data length scale, not in Mm
-    zmax = nresol_z/nresol_y # Maximum value of z in data length scale, not in Mm
-    zmax = 0.85
 
-    nf_max = min(nresol_x, nresol_y, nresol_z)-1
-
+    if nresol_x < nresol_y:
+        xmax = L # Maximum value of x in data length scale, not in Mm
+        ymax = nresol_y/nresol_x # Maximum value of y in data length scale, not in Mm
+    if nresol_y < nresol_x:
+        ymax = L
+        xmax = nresol_x/nresol_y
+    if nresol_y == nresol_x:
+        xmax = L
+        ymax = L
+  
     pixelsize_x = abs(xmax-xmin)/nresol_x # Data pixel size in x direction
     pixelsize_y = abs(ymax-ymin)/nresol_y # Data pixel size in y direction
+    
+    if pixelsize_x != pixelsize_y:
+        print('directional pixel sizes of data do not match') 
+        raise ValueError
+    
+    nresol_z = math.floor(10000.0/pixelsize) # Artifical upper boundary at 10Mm outside of corona
+    z0_index = math.floor(2000.0/pixelsize)  # Height of Transition Region at 2Mm
+
+    if xmax == L:
+        zmax = nresol_z/nresol_x
+        z0 = z0_index/nresol_x
+    if ymax == L:
+        zmax = nresol_z/nresol_y
+        z0 = z0_index/nresol_y
+
     pixelsize_z = abs(zmax-zmin)/nresol_z # Data pixel size in z direction
 
-    return [data_bx, data_by, data_bz, nresol_x, nresol_y, nresol_z, pixelsize_x, pixelsize_y, pixelsize_z, nf_max, xmin, xmax, ymin, ymax, zmin, zmax]
+    if pixelsize_z != pixelsize_x:
+        print('nresol_z and zmax do not match') 
+        raise ValueError
+    
+    nf_max = min(nresol_x, nresol_y)-1
+
+    return [data_bx, data_by, data_bz, nresol_x, nresol_y, nresol_z, pixelsize_x, pixelsize_y, pixelsize_z, nf_max, xmin, xmax, ymin, ymax, zmin, zmax, z0]
 

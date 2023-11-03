@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import fieldline3D
+import datetime
 
 def plot_magnetogram_boundary(data_bz, nresol_x, nresol_y):
     
@@ -32,7 +33,7 @@ def plot_magnetogram_boundary_3D(data_bz, nresol_x, nresol_y, xmin, xmax, ymin, 
     ax.view_init(30, 245)  
     plt.show()
 
-def plot_fieldlines_grid(data_b, h1, hmin, hmax, eps, nresol_x, nresol_y, nresol_z, xmin, xmax, ymin, ymax, zmin, zmax):
+def plot_fieldlines_grid(data_b, h1, hmin, hmax, eps, nresol_x, nresol_y, nresol_z, xmin, xmax, ymin, ymax, zmin, zmax, a, b, alpha, nf_max):
 
     data_bz = data_b[:, :, 0, 2]
 
@@ -51,7 +52,7 @@ def plot_fieldlines_grid(data_b, h1, hmin, hmax, eps, nresol_x, nresol_y, nresol
     ax.set_zlim([zmin, zmax])
     ax.view_init(30, 245) 
     ax.view_init(90,270)
-    ax.set_box_aspect((xmax,ymax,zmax))
+    ax.set_box_aspect((xmax,ymax,1))
 
     nlinesmaxx = 10
     nlinesmaxy = 10
@@ -102,4 +103,10 @@ def plot_fieldlines_grid(data_b, h1, hmin, hmax, eps, nresol_x, nresol_y, nresol
             fieldline_z[:] = fieldline[:, 2]
             # Need to give row direction first/ Y, then column direction/ X
             ax.plot(fieldline_y, fieldline_x, fieldline_z, color='red', linewidth=0.5, zorder=4000)
+    
+    current_time = datetime.datetime.now()
+    dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
+
+    plotname = '/Users/lilli/Desktop/ISSI_plots/fieldlines3D_' + str(a) + '_' + str(b) + '_' + str(alpha) + '_' + str(nf_max) + '_' + dt_string + '.png'
+    plt.savefig(plotname, dpi=300)
     plt.show()
