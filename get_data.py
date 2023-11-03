@@ -31,8 +31,7 @@ def get_magnetogram(path):
     # print(data['info_boundary'])
     print(data["info_array"])
 
-    # pixelsize = float(input("Pixelsize in km?"))
-    pixelsize = 192
+    pixelsize = float(input("Pixelsize in km?"))
 
     bx_xlen = data_bx.shape[1]
     bx_ylen = data_bx.shape[0]

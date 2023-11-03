@@ -97,7 +97,6 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(
 
 # plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
-start = datetime.datetime.now()
 
 B_Seehafer = BField_model.get_magnetic_field(
     data_bz_Seehafer,
@@ -125,8 +124,7 @@ current_time = datetime.datetime.now()
 dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
 path = (
-    # "/Users/lilli/Desktop/ISSI_data/field_data_"
-    "./"
+    "/Users/lilli/Desktop/ISSI_data/field_data_"
     + str(a)
     + "_"
     + str(b)
@@ -134,6 +132,8 @@ path = (
     + str(alpha)
     + "_"
     + str(nf_max)
+    + "_"
+    + dt_string
     + ".npy"
 )
 
@@ -164,7 +164,3 @@ plot_magnetogram.plot_fieldlines_grid(
     alpha,
     nf_max,
 )
-
-end = datetime.datetime.now()
-
-print(end - start)
