@@ -4,6 +4,18 @@ import time
 import scipy
 import fft
 
+def f(z, z0, deltaz, a, b):
+    return a*(1.0-b*np.tanh((z-z0)/deltaz))
+
+def f_low(z, a, kappa):
+    return a*np.exp(-kappa*z)
+
+def dfdz(z, z0, deltaz, a, b):
+    return -a*b/(deltaz*np.cosh((z-z0)/deltaz))
+
+def dfdz_low(z, a, kappa):
+    return -kappa*a*np.exp(-kappa*z)
+
 def Phi_function(z, p, q, z0, deltaz):
     
     rplus = p/deltaz

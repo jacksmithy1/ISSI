@@ -4,6 +4,15 @@ import numpy as np
 import Seehafer
 import plot_magnetogram
 import BField_model
+import datetime
+import os
+
+# TO DO
+
+# Plasma Parameters 
+# calculate z0 and delta z automatically from data
+# optimise choice of a and alpha, switch case for potential, LFF and MHS
+# automate nresol_z and zmax for generic data
 
 a = 0.0
 alpha = 0.0
@@ -49,6 +58,14 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(data_bz, xmin, xmax, ymin, ymax, 
 #plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
 B_Seehafer = BField_model.get_magnetic_field(data_bz_Seehafer, z0, deltaz, a, b, alpha, -xmax, xmax, -ymax, ymax, zmin, zmax, nresol_x, nresol_y, nresol_z, pixelsize_x, pixelsize_y, nf_max)
+
+current_time = datetime.datetime.now()
+dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
+
+path = '/Users/lilli/Desktop/ISSI_data/field_data_' + str(a) + '_' + str(b) + '_' + str(alpha) + '_' + str(nf_max) + '_' + dt_string + '.npy'
+
+with open(path, 'wb') as file:
+    np.save(file, B_Seehafer)
 
 #b_back_test = np.zeros((2*nresol_y, 2*nresol_x))
 #b_back_test = B_Seehafer[:, :, 0, 2]

@@ -24,8 +24,6 @@ def get_magnetogram(path):
     #print(data['info_boundary'])
     print(data['info_array'])
 
-    print(data_bz.shape)
-
     bx_xlen = data_bx.shape[1]
     bx_ylen = data_bx.shape[0]
     by_xlen = data_by.shape[1]
