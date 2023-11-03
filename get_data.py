@@ -24,6 +24,8 @@ def get_magnetogram(path):
     #print(data['info_boundary'])
     print(data['info_array'])
 
+    print(data_bz.shape)
+
     bx_xlen = data_bx.shape[1]
     bx_ylen = data_bx.shape[0]
     by_xlen = data_by.shape[1]
@@ -57,6 +59,6 @@ def get_magnetogram(path):
     pixelsize_x = abs(xmax-xmin)/nresol_x # Data pixel size in x direction
     pixelsize_y = abs(ymax-ymin)/nresol_y # Data pixel size in y direction
     pixelsize_z = abs(zmax-zmin)/nresol_z # Data pixel size in z direction
-    
+
     return [data_bx, data_by, data_bz, nresol_x, nresol_y, nresol_z, pixelsize_x, pixelsize_y, pixelsize_z, nf_max, xmin, xmax, ymin, ymax, zmin, zmax]
 

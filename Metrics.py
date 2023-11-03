@@ -72,35 +72,3 @@ def Mag_ener_metric(B, b):
     div = np.sqrt(np.dot(Bx, Bx)+np.dot(By, By)+np.dot(Bz, Bz))
     
     return num/div
-
-
-# def main():
-    
-#     B_ref = np.zeros((2,2,2,3))
-#     B_rec = np.zeros((2,2,2,3))
-    
-#     eps = 0.00001
-    
-#     for i in range(2):
-#         for j in range(2):
-#             for k in range(2):
-#                 for m in range(3):
-#                     B_ref[i,j,k,m] = np.cos(i)*np.sin(j+np.pi/2.0)*(k+1)*(i+1)
-#                     B_rec[i,j,k,m] = B_ref[i,j,k,m]+(-1)**i*eps
-            
-#     #print('B_ref', B_ref)
-#     #print('B_rec', B_rec)
-    
-#     print('B_ref max', B_ref.max())
-#     print('B_ref min', B_ref.min())
-    
-#     Vecmet = Vec_corr_metric(B_ref, B_rec)
-#     print(Vecmet)
-#     CSmet = Cau_Schw_metric(B_ref, B_rec)
-#     print(CSmet)
-#     NVmet = Norm_vec_err_metric(B_ref, B_rec)
-#     print(NVmet)
-#     MVmet = Mean_vec_err_metric(B_ref, B_rec)
-#     print(MVmet)
-#     MEmet = Mag_ener_metric(B_ref, B_rec)
-#     print(MEmet)
