@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import fieldline3D
+import src.fieldline3D as fieldline3D
 import datetime
 
 

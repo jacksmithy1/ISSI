@@ -1,4 +1,4 @@
-import BField_model
+import src.BField_model as BField_model
 import numpy as np
 
 

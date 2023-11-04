@@ -1,9 +1,9 @@
-import get_data
+import src.get_data as get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import Seehafer
-import plot_magnetogram
-import BField_model
+import src.Seehafer as Seehafer
+import src.plot_magnetogram as plot_magnetogram
+import src.BField_model as BField_model
 import datetime
 import os
 
@@ -50,7 +50,7 @@ hmax = 1.0  # Maximum step length for fieldline3D
 
 # data = get_data.get_magnetogram('Analytic_boundary_data.sav')
 
-data = get_data.get_magnetogram("RMHD_boundary_data.sav")
+data = get_data.get_magnetogram("data/RMHD_boundary_data.sav")
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
@@ -124,7 +124,7 @@ current_time = datetime.datetime.now()
 dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
 path = (
-    "./"
+    "models/"
     + str(a)
     + "_"
     + str(b)
@@ -142,8 +142,17 @@ with open(path, "wb") as file:
 
 b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 b_back_test = B_Seehafer[:, :, 0, 2]
+
 plot_magnetogram.plot_magnetogram_boundary_3D(
-    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
+    b_back_test,
+    nresol_x,
+    nresol_y,
+    -xmax,
+    xmax,
+    -ymax,
+    ymax,
+    zmin,
+    zmax,
 )
 
 plot_magnetogram.plot_fieldlines_grid(

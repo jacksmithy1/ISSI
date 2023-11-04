@@ -2,7 +2,7 @@ import numpy as np
 from datetime import datetime
 import time
 import scipy
-import fft
+import src.fft as fft
 
 
 def f(z, z0, deltaz, a, b):

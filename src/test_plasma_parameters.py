@@ -1,10 +1,10 @@
-import plasma_parameters
-import get_data
+import src.plasma_parameters as plasma_parameters
+import src.get_data as get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import Seehafer
-import plot_magnetogram
-import BField_model
+import src.Seehafer as Seehafer
+import src.plot_magnetogram as plot_magnetogram
+import src.BField_model as BField_model
 import datetime
 import os
 
