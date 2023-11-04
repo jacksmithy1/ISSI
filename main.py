@@ -124,7 +124,7 @@ current_time = datetime.datetime.now()
 dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
 path = (
-    "/Users/lilli/Desktop/ISSI_data/field_data_"
+    "./"
     + str(a)
     + "_"
     + str(b)
