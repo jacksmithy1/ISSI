@@ -379,7 +379,7 @@ def Bz_parderiv(
         dummymat4 = np.matmul(
             sin_y.T, dummymat3
         )  # [0:2*nresol_y, 0:nf_max]*[0:nf_max, 0:2*nresol_x] = [0:2*nresol_y, 0:2*nresol_x]
-        Bz_derivs[:, :, iz, 0] = dummymat4
+        Bz_derivs[:, :, iz, 1] = dummymat4
 
         Coeff_matrix3 = np.multiply(
             np.multiply(np.multiply(k2_arr_Seehafer, Phifunc[:, :, iz]), anm),
@@ -391,6 +391,6 @@ def Bz_parderiv(
         dummymat6 = np.matmul(
             cos_y.T, dummymat5
         )  # [0:2*nresol_y, 0:nf_max]*[0:nf_max, 0:2*nresol_x] = [0:2*nresol_y, 0:2*nresol_x]
-        Bz_derivs[:, :, iz, 1] = dummymat6
+        Bz_derivs[:, :, iz, 0] = dummymat6
 
     return Bz_derivs
