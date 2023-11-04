@@ -22,10 +22,16 @@ path_blos = (
 )
 
 with fits.open(path_blos) as data:
-    data.info()
+    # data.info()
     image_data = fits.getdata(path_blos, ext=0)
     # print(image_data.shape)
     photo_data = image_data[500:1000, 400:1200]
+    # with open(
+    #    "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01_HEADER.txt",
+    #    "w",
+    # ) as f:
+    #    for d in data:
+    #        f.write(repr(d.header))
 
 plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
 
@@ -73,7 +79,7 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
-plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
+# plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
 
 B_Seehafer = BField_model.get_magnetic_field(
     data_bz_Seehafer,
@@ -96,11 +102,11 @@ B_Seehafer = BField_model.get_magnetic_field(
     nf_max,
 )
 
-b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
-b_back_test = B_Seehafer[:, :, 0, 2]
-plot_magnetogram.plot_magnetogram_boundary_3D(
-    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
-)
+# b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
+# b_back_test = B_Seehafer[:, :, 0, 2]
+# plot_magnetogram.plot_magnetogram_boundary_3D(
+#    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
+# )
 
 plot_magnetogram.plot_fieldlines_grid(
     B_Seehafer,

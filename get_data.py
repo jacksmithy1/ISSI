@@ -117,7 +117,8 @@ def get_magnetogram(path):
 def get_magnetogram_SOAR(data):
     data_bz = data
 
-    pixelsize = float(input("Pixelsize in km?"))
+    # pixelsize_km = float(input("Pixelsize for magnetogram in km?"))
+    pixelsize_z_km = float(input("Pixelsize for vertical direction in km?"))
 
     bz_xlen = data_bz.shape[1]
     bz_ylen = data_bz.shape[0]
@@ -158,22 +159,27 @@ def get_magnetogram_SOAR(data):
         raise ValueError
 
     nresol_z = math.floor(
-        10000.0 / pixelsize
+        10000.0 / pixelsize_z_km
     )  # Artifical upper boundary at 10Mm outside of corona
-    z0_index = math.floor(2000.0 / pixelsize)  # Height of Transition Region at 2Mm
+    z0_index = math.floor(2000.0 / pixelsize_z_km)  # Height of Transition Region at 2Mm
 
     if xmax == L:
+        # zmax = nresol_z * pixelsize_z_km / (nresol_x * pixelsize_km)
+        # z0 = z0_index * pixelsize_z_km / (nresol_x * pixelsize_km)
         zmax = nresol_z / nresol_x
         z0 = z0_index / nresol_x
     if ymax == L:
+        # zmax = nresol_z * pixelsize_z_km / (nresol_y * pixelsize_km)
+        # z0 = (z0_index * pixelsize_z_km) / (nresol_y * pixelsize_km)
         zmax = nresol_z / nresol_y
         z0 = z0_index / nresol_y
 
     pixelsize_z = abs(zmax - zmin) / nresol_z  # Data pixel size in z direction
 
-    if pixelsize_z != pixelsize_x:
-        print("nresol_z and zmax do not match")
-        raise ValueError
+    # pixelsize_z = pixelsize_x * pixelsize_z_km / pixelsize_km
+    # if pixelsize_z != pixelsize_x:
+    #    print("nresol_z and zmax do not match")
+    #    raise ValueError
 
     nf_max = min(nresol_x, nresol_y) - 1
 

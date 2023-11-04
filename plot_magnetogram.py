@@ -90,6 +90,14 @@ def plot_fieldlines_grid(
     ax.view_init(90, 270)
     ax.set_box_aspect((xmax, ymax, 1))
 
+    # SOAR FITS
+    nlinesmaxx = 32
+    nlinesmaxy = 20
+    x_0 = 0.0
+    y_0 = 0.0
+    dx = 0.05
+    dy = 0.05
+
     # Analytical ISSI
     nlinesmaxx = 10
     nlinesmaxy = 10
@@ -100,14 +108,6 @@ def plot_fieldlines_grid(
 
     # RMHD ISSI
     nlinesmaxx = 40
-    nlinesmaxy = 20
-    x_0 = 0.0
-    y_0 = 0.0
-    dx = 0.05
-    dy = 0.05
-
-    # SOAR FITS
-    nlinesmaxx = 32
     nlinesmaxy = 20
     x_0 = 0.0
     y_0 = 0.0
@@ -165,7 +165,7 @@ def plot_fieldlines_grid(
                 fieldline_y,
                 fieldline_x,
                 fieldline_z,
-                color="red",
+                color="yellow",
                 linewidth=0.5,
                 zorder=4000,
             )

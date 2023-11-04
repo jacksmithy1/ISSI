@@ -35,7 +35,20 @@ def pres(x, y, z, z0, deltaz, a, b, mu0, bz):
     return bpressure(z) + Bzsqr * BField_model.f(z, z0, deltaz, a, b) / (2.0 * mu0)
 
 
-# def den(z):
+def den(x, y, z, z0, deltaz, a, b, bx, by, bz, dBz, beta0, h, T0, T_photosphere):
+    Bx = bx[y, x, z]
+    By = by[y, x, z]
+    Bz = bz[y, x, z]
+    dBzdx = dBz[y, x, z, 0]
+    dBzdy = dBz[y, x, z, 1]
+    dBzdz = dBz[y, x, z, 1]
+    BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
+    return (
+        0.5 * beta0 / h * T0 / T_photosphere * bdensity(z)
+        + BField_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
+        + BField_model.f(z, z0, deltaz, a, b) * BdotgradBz
+    )
+
 
 # Something with derivative of Bz ugh
 # B dot gradBz
