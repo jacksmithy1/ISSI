@@ -138,9 +138,11 @@ path = (
 with open(path, "wb") as file:
     np.save(file, B_Seehafer)
 
-# b_back_test = np.zeros((2*nresol_y, 2*nresol_x))
-# b_back_test = B_Seehafer[:, :, 0, 2]
-# plot_magnetogram.plot_magnetogram_boundary_3D(b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
+b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
+b_back_test = B_Seehafer[:, :, 0, 2]
+plot_magnetogram.plot_magnetogram_boundary_3D(
+    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
+)
 
 plot_magnetogram.plot_fieldlines_grid(
     B_Seehafer,
