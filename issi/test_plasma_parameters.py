@@ -1,12 +1,9 @@
-import src.plasma_parameters as plasma_parameters
-import src.get_data as get_data
+import issi.plasma_parameters as plasma_parameters
+import issi.get_data as get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import src.Seehafer as Seehafer
-import src.plot_magnetogram as plot_magnetogram
-import src.BField_model as BField_model
-import datetime
-import os
+import issi.Seehafer as Seehafer
+import issi.BField_model as BField_model
 
 a = 0.0
 alpha = 0.0

@@ -1,15 +1,9 @@
-import astropy
 from astropy.io import fits
-import sunpy_soar
-from sunpy.net import Fido, attrs as a
-from astropy.time import Time
-import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
-import numpy as np
-import src.plot_magnetogram as plot_magnetogram
-import src.get_data as get_data
-import src.Seehafer as Seehafer
-import src.BField_model as BField_model
+from sunpy.net import attrs as a
+import issi.plot_magnetogram as plot_magnetogram
+import issi.get_data as get_data
+import issi.Seehafer as Seehafer
+import issi.BField_model as BField_model
 
 
 # TO DO

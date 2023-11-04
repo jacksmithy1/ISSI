@@ -7,9 +7,6 @@ Created on Tue Jan 10 13:10:41 2023
 """
 
 import numpy as np
-from datetime import datetime
-import time
-import scipy
 
 
 def fft_coeff_Seehafer(b_back, k2_arr, nresol_x, nresol_y, nf_max):

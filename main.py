@@ -1,11 +1,12 @@
-import issi.get_data as get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import issi.Seehafer as Seehafer
-import issi.plot_magnetogram as plot_magnetogram
 import issi.BField_model as BField_model
 import datetime
 import os
+
+from issi.get_data import get_magnetogram
+from issi.Seehafer import mirror_magnetogram
+from issi.plot_magnetogram import plot_fieldlines_grid, plot_magnetogram_boundary_3D
 
 # TO DO
 
@@ -50,7 +51,7 @@ hmax = 1.0  # Maximum step length for fieldline3D
 
 # data = get_data.get_magnetogram('Analytic_boundary_data.sav')
 
-data = get_data.get_magnetogram("data/RMHD_boundary_data.sav")
+data = get_magnetogram("data/RMHD_boundary_data.sav")
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
@@ -89,7 +90,7 @@ beta0 = p0 / pB0  # photospheric plasma beta
 
 # plot_magnetogram.plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
-data_bz_Seehafer = Seehafer.mirror_magnetogram(
+data_bz_Seehafer = mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
@@ -143,7 +144,7 @@ with open(path, "wb") as file:
 b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 b_back_test = B_Seehafer[:, :, 0, 2]
 
-plot_magnetogram.plot_magnetogram_boundary_3D(
+plot_magnetogram_boundary_3D(
     b_back_test,
     nresol_x,
     nresol_y,
@@ -155,7 +156,7 @@ plot_magnetogram.plot_magnetogram_boundary_3D(
     zmax,
 )
 
-plot_magnetogram.plot_fieldlines_grid(
+plot_fieldlines_grid(
     B_Seehafer,
     h1,
     hmin,
