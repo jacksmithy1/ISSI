@@ -97,6 +97,7 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(
 
 # plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
+
 B_Seehafer = BField_model.get_magnetic_field(
     data_bz_Seehafer,
     z0,
@@ -119,6 +120,7 @@ B_Seehafer = BField_model.get_magnetic_field(
 )
 
 current_time = datetime.datetime.now()
+
 dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
 path = (

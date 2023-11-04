@@ -11,7 +11,6 @@ import math
 
 def get_magnetogram(path):
     data = scipy.io.readsav(path, python_dict=True, verbose=True)
-
     # data_bz = data['b2dz5'] # [0:nresol_y,0:nresol_x]
     # Y-axis size first as this corresponds to number of rows, then X-Axis size corresponding t number of columns
     # data_bx = data['b2dx5'] # [0:nresol_y,0:nresol_x]
