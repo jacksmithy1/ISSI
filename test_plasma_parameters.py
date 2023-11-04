@@ -105,6 +105,12 @@ B_Seehafer = BField_model.get_magnetic_field(
     pixelsize_y,
     nf_max,
 )
+b_back = np.zeros((nresol_y, nresol_x))
+b_back = B_Seehafer[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, 0, 2]
+maxcoord = np.unravel_index(np.argmax(b_back, axis=None), b_back.shape)
+
+x0 = maxcoord[0]
+y0 = maxcoord[1]
 
 Bx = B_Seehafer[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 1]
 By = B_Seehafer[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 0]
@@ -118,6 +124,61 @@ x_arr = X[nresol_x : 2 * nresol_x]
 y_arr = Y[nresol_y : 2 * nresol_y]
 
 # Pressure, Density and Temperature
+
+p = np.zeros(nresol_z)
+d = np.zeros(nresol_z)
+t = np.zeros(nresol_z)
+
+ix = x0
+iy = y0
+
+for iz in range(0, nresol_z):
+    z = Z[iz]
+    p[iz] = plasma_parameters.pres(
+        ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1
+    )
+    d[iz] = plasma_parameters.den(
+        ix,
+        iy,
+        iz,
+        z,
+        z0,
+        deltaz,
+        a,
+        b,
+        Bx,
+        By,
+        Bz,
+        dBzd,
+        beta0,
+        H,
+        T0,
+        T1,
+        T_photosphere,
+    )
+    t[iz] = plasma_parameters.temp(
+        ix,
+        iy,
+        iz,
+        z,
+        z0,
+        deltaz,
+        a,
+        b,
+        Bx,
+        By,
+        Bz,
+        dBzd,
+        beta0,
+        H,
+        T0,
+        T1,
+        T_photosphere,
+    )
+
+plt.plot([p, d, t], Z)
+plt.show()
+exit()
 
 p = np.zeros((nresol_y, nresol_x, nresol_z))
 d = np.zeros((nresol_y, nresol_x, nresol_z))
@@ -170,8 +231,3 @@ for iz in range(0, nresol_z):
                 T1,
                 T_photosphere,
             )
-
-b_back = np.zeros((nresol_y, nresol_x))
-b_back = B_Seehafer[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, 0, 2]
-maxcoord = np.argmax(b_back)
-print(maxcoord)
