@@ -1,5 +1,5 @@
-import issi.BField_model as BField_model
 import numpy as np
+from issi.BField_model import f, dfdz
 
 
 def bpressure(z, z0, deltaz, h, T0, T1):
@@ -34,7 +34,7 @@ def pres(ix, iy, iz, z, z0, deltaz, a, b, beta0, bz, h, T0, T1):
     Bzsqr = bz[iy, ix, iz] ** 2.0
     return (
         0.5 * beta0 * bpressure(z, z0, deltaz, h, T0, T1)
-        + Bzsqr * BField_model.f(z, z0, deltaz, a, b) / 2.0
+        + Bzsqr * f(z, z0, deltaz, a, b) / 2.0
     )
 
 
@@ -50,8 +50,8 @@ def den(
     BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
     return (
         0.5 * beta0 / h * T0 / T_photosphere * bdensity(z, z0, deltaz, T0, T1, h)
-        + BField_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
-        + BField_model.f(z, z0, deltaz, a, b) * BdotgradBz
+        + dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
+        + f(z, z0, deltaz, a, b) * BdotgradBz
     )
 
 

@@ -10,8 +10,6 @@ import numpy as np
 from math import sqrt, floor
 from numba import njit
 
-# from numba import njit, float64 as f64, void, boolean
-
 # rkf45 coefficients
 b2 = 0.25
 b3, c3 = 3 / 32, 9 / 32

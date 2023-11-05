@@ -1,9 +1,10 @@
-import issi.plasma_parameters as plasma_parameters
-import issi.get_data as get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import issi.Seehafer as Seehafer
-import issi.BField_model as BField_model
+
+from issi.Seehafer import mirror_magnetogram
+from issi.BField_model import Bz_parderiv, get_magnetic_field
+from issi.plasma_parameters import pres, den, temp
+from issi.get_data import get_magnetogram
 
 a = 0.0
 alpha = 0.0
@@ -17,7 +18,7 @@ eps = 1.0e-8  # Tolerance to which we require point on field line known for fiel
 hmin = 0.0  # Minimum step length for fieldline3D
 hmax = 1.0  # Maximum step length for fieldline3D
 
-data = get_data.get_magnetogram("RMHD_boundary_data.sav")
+data = get_magnetogram("RMHD_boundary_data.sav")
 
 data_bx = data[0]
 data_by = data[1]
@@ -52,11 +53,11 @@ p0 = (
 pB0 = 3.9789 - 3 * B0**2.0  # photospheric magnetic pressure in Pascal
 beta0 = p0 / pB0  # photospheric plasma beta
 
-data_bz_Seehafer = Seehafer.mirror_magnetogram(
+data_bz_Seehafer = mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
-dBzd = BField_model.Bz_parderiv(
+dBzd = Bz_parderiv(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -82,7 +83,7 @@ dBzdx = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 1]
 dBzdy = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 0]
 dBzdz = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 2]
 
-B_Seehafer = BField_model.get_magnetic_field(
+B_Seehafer = get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -128,10 +129,8 @@ t = np.zeros(nresol_z)
 
 for iz in range(0, nresol_z):
     z = Z[iz]
-    p[iz] = plasma_parameters.pres(
-        ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1
-    )
-    d[iz] = plasma_parameters.den(
+    p[iz] = pres(ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1)
+    d[iz] = den(
         ix,
         iy,
         iz,
@@ -150,7 +149,7 @@ for iz in range(0, nresol_z):
         T1,
         T_photosphere,
     )
-    t[iz] = plasma_parameters.temp(
+    t[iz] = temp(
         ix,
         iy,
         iz,

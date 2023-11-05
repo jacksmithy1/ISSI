@@ -1,11 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import issi.BField_model as BField_model
 import datetime
-import os
 
 from issi.get_data import get_magnetogram
 from issi.Seehafer import mirror_magnetogram
+from issi.BField_model import get_magnetic_field
 from issi.plot_magnetogram import plot_fieldlines_grid, plot_magnetogram_boundary_3D
 
 # TO DO
@@ -102,7 +100,7 @@ def main():
 
     # plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
-    B_Seehafer = BField_model.get_magnetic_field(
+    B_Seehafer = get_magnetic_field(
         data_bz_Seehafer,
         z0,
         deltaz,
