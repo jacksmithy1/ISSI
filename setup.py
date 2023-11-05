@@ -13,7 +13,6 @@ setuptools.setup(
         "numpy",
         "scipy",
         "matplotlib",
-        "issi",
         "numba",
         "astropy",
         "sunpy",
