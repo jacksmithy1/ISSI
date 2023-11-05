@@ -8,9 +8,25 @@ import BField_model
 import datetime
 import os
 
-a = 0.0
-alpha = 0.0
+# ISSI Analytical solution 
+
+# Low solution parameters
+
+a = 0.5
+alpha = -0.3
+kappa = 0.02
+
+# Neukirch solution parameters
+
 b = 1.0
+
+# Background atmosphere
+
+rho0 = 2.7 * 10.0 ** -7.0 # g/m^3
+T_init = np.array([6000.0, 5500.0, 10000.0]) # K
+h_init = np.array([0.0, 0.5, 2.0]) # Mm
+M = 1 # Mean molecular weight
+g = 272.2 # m/s^-2 gravitational acceleration
 
 T_photosphere = 5600.0  # temperature photosphere in Kelvin
 T_corona = 2.0 * 10.0**6.0  # temperature corona in Kelvin
