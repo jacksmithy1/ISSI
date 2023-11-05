@@ -6,14 +6,9 @@ Created on Fri Aug 19 12:33:10 2022
 @author: lilli
 """
 
-from __future__ import print_function, division
 import numpy as np
 from math import sqrt, floor
-import time
-from datetime import datetime
 from numba import njit
-
-# from numba import njit, float64 as f64, void, boolean
 
 # rkf45 coefficients
 b2 = 0.25
