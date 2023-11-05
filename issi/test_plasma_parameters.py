@@ -186,9 +186,7 @@ for iz in range(0, nresol_z):
             x = x_arr[ix]
             y = y_arr[iy]
             z = Z[iz]
-            p[iy, ix, iz] = plasma_parameters.pres(
-                ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1
-            )
+            p[iy, ix, iz] = pres(ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1)
             d[iy, ix, iz] = plasma_parameters.den(
                 ix,
                 iy,
