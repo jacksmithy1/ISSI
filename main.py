@@ -1,9 +1,13 @@
-import get_data
+from load.get_data import get_magnetogram
 import matplotlib.pyplot as plt
 import numpy as np
-import seehafer
-import plot_magnetogram
-import bfield_model
+from utility.seehafer import mirror_magnetogram
+from plot.plot_magnetogram import (
+    plot_fieldlines_grid,
+    plot_magnetogram_boundary,
+    plot_magnetogram_boundary_3D,
+)
+from model.field.bfield_model import get_magnetic_field
 import datetime
 import os
 
@@ -50,7 +54,7 @@ hmax = 1.0  # Maximum step length for fieldline3D
 
 # data = get_data.get_magnetogram('Analytic_boundary_data.sav')
 
-data = get_data.get_magnetogram("RMHD_boundary_data.sav")
+data = get_magnetogram("data/RMHD_boundary_data.sav")
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
@@ -87,18 +91,18 @@ p0 = (
 pB0 = 3.9789 - 3 * B0**2.0  # photospheric magnetic pressure in Pascal
 beta0 = p0 / pB0  # photospheric plasma beta
 
-# plot_magnetogram.plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
+# plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
-data_bz_Seehafer = seehafer.mirror_magnetogram(
+data_bz_Seehafer = mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
-# plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2*nresol_x, 2*nresol_y)
+# plot_magnetogram_boundary(data_bz_Seehafer, 2*nresol_x, 2*nresol_y)
 
-# plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
+# plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
 
-B_Seehafer = bfield_model.get_magnetic_field(
+B_Seehafer = get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -142,7 +146,7 @@ B_Seehafer = bfield_model.get_magnetic_field(
 
 # b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 # b_back_test = B_Seehafer[:, :, 0, 2]
-# plot_magnetogram.plot_magnetogram_boundary_3D(
+# plot_magnetogram_boundary_3D(
 #    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
 # )
 """
@@ -178,7 +182,7 @@ B_Seehafer = bfield_model_copy.bfield(
 )
 """
 
-plot_magnetogram.plot_fieldlines_grid(
+plot_fieldlines_grid(
     B_Seehafer,
     h1,
     hmin,

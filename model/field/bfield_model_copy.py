@@ -2,8 +2,8 @@ import numpy as np
 from datetime import datetime
 import time
 import scipy
-import fft
-import seehafer
+from utility.fft import fft_coeff_Seehafer
+from utility.seehafer import mirror_magnetogram
 
 
 def f(z, a, b=None, kappa=None, z0=None, deltaz=None, height_profile="tanh"):
@@ -148,11 +148,11 @@ def bfield(
         * np.sqrt(k2_arr_Seehafer * (1.0 - a + a * b) - alpha**2)
     )
 
-    data_bz_Seehafer = seehafer.mirror_magnetogram(
+    data_bz_Seehafer = mirror_magnetogram(
         data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
     )
 
-    anm, signal = fft.fft_coeff_Seehafer(
+    anm, signal = fft_coeff_Seehafer(
         data_bz_Seehafer, k2_arr_Seehafer, 2 * nresol_x, 2 * nresol_y, nf_max
     )
 

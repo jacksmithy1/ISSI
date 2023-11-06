@@ -2,7 +2,7 @@ import numpy as np
 from datetime import datetime
 import time
 import scipy
-import fft
+from utility.fft import fft_coeff_Seehafer
 
 
 def f(z, z0, deltaz, a, b):
@@ -155,7 +155,7 @@ def get_magnetic_field(
         * np.sqrt(k2_arr_Seehafer * (1.0 - a + a * b) - alpha**2)
     )
 
-    anm, signal = fft.fft_coeff_Seehafer(
+    anm, signal = fft_coeff_Seehafer(
         data_bz, k2_arr_Seehafer, 2 * nresol_x, 2 * nresol_y, nf_max
     )
 
@@ -322,7 +322,7 @@ def Bz_parderiv(
         * np.sqrt(k2_arr_Seehafer * (1.0 - a + a * b) - alpha**2)
     )
 
-    anm, signal = fft.fft_coeff_Seehafer(
+    anm, signal = fft_coeff_Seehafer(
         data_bz, k2_arr_Seehafer, 2 * nresol_x, 2 * nresol_y, nf_max
     )
 

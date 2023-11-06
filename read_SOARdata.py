@@ -4,13 +4,16 @@ import sunpy_soar
 from sunpy.net import Fido, attrs as a
 from astropy.time import Time
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 import numpy as np
-import plot_magnetogram
-import get_data
-import seehafer
-import bfield_model
+from plot.plot_magnetogram import (
+    plot_fieldlines_grid,
+    plot_magnetogram_boundary,
+    plot_magnetogram_boundary_3D,
+)
+from utility.seehafer import mirror_magnetogram
+from model.field.bfield_model import get_magnetic_field
 import math
+from load.get_data import get_magnetogram_SOAR
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
@@ -56,7 +59,7 @@ with fits.open(path_blos) as data:
 # plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
 # plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
 # exit()
-data = get_data.get_magnetogram_SOAR(photo_data, pixelsize_km)
+data = get_magnetogram_SOAR(photo_data, pixelsize_km)
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
@@ -96,13 +99,13 @@ hmin = 0.0  # Minimum step length for fieldline3D
 hmax = 1.0  # Maximum step length for fieldline3D
 deltaz = z0 / 10.0  # Width of transitional region ca. 200km
 
-data_bz_Seehafer = seehafer.mirror_magnetogram(
+data_bz_Seehafer = mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
-# plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
+# plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
 
-B_Seehafer = bfield_model.get_magnetic_field(
+B_Seehafer = get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -125,11 +128,11 @@ B_Seehafer = bfield_model.get_magnetic_field(
 
 # b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 # b_back_test = B_Seehafer[:, :, 0, 2]
-# plot_magnetogram.plot_magnetogram_boundary_3D(
+# plot_magnetogram_boundary_3D(
 #    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
 # )
 
-plot_magnetogram.plot_fieldlines_grid(
+plot_fieldlines_grid(
     B_Seehafer,
     h1,
     hmin,

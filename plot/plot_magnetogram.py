@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import fieldline3D
+from linetracer.fieldline3D import fieldline3d
 import datetime
 
 
@@ -119,7 +119,7 @@ def plot_fieldlines_grid(
             ystart = [y_start, x_start, 0.0]
 
             # Fieldline3D expects startpt, BField, Row values, Column values so we need to give Y first, then X
-            fieldline = fieldline3D.fieldline3d(
+            fieldline = fieldline3d(
                 ystart,
                 data_b,
                 Y,
