@@ -10,7 +10,7 @@ import plot_magnetogram
 import get_data
 import seehafer
 import bfield_model
-
+import math
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
@@ -24,7 +24,7 @@ path_blos = (
 with fits.open(path_blos) as data:
     # data.info()
     image_data = fits.getdata(path_blos, ext=0)
-    print(image_data.shape)
+    # print(image_data.shape)
     photo_data = image_data[500:1000, 400:1200]
     # with open(
     #    "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01_HEADER.txt",
@@ -32,12 +32,31 @@ with fits.open(path_blos) as data:
     # ) as f:
     #    for d in data:
     #        f.write(repr(d.header))
+    hdr = data[0].header  # the primary HDU header
+    dist = hdr["DSUN_OBS"]
+    pixelsize_x_unit = hdr["CUNIT1"]
+    pixelsize_y_unit = hdr["CUNIT2"]
+    pixelsize_x_arcsec = hdr["CDELT1"]
+    pixelsize_y_arcsec = hdr["CDELT2"]
 
+    if not pixelsize_x_unit == pixelsize_y_unit:
+        print("Pixelsize units not matchy-matchy")
+        # return ValueError
 
-plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
-plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
-exit()
-data = get_data.get_magnetogram_SOAR(photo_data)
+    if not pixelsize_x_arcsec == pixelsize_y_arcsec:
+        print("Data pixelsizes in x and y direction not matchy-matchy")
+        # return ValueError
+    else:
+        pixelsize_radians = pixelsize_x_arcsec / 206265.0
+
+    dist_km = dist / 1000.0
+
+    pixelsize_km = math.floor(pixelsize_radians * dist_km)
+
+# plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
+# plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
+# exit()
+data = get_data.get_magnetogram_SOAR(photo_data, pixelsize_km)
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 

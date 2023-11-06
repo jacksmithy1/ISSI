@@ -114,11 +114,11 @@ def get_magnetogram(path):
     ]
 
 
-def get_magnetogram_SOAR(data):
+def get_magnetogram_SOAR(data, pixelsize_km):
     data_bz = data
 
     # pixelsize_km = float(input("Pixelsize for magnetogram in km?"))
-    pixelsize_z_km = float(input("Pixelsize for vertical direction in km?"))
+    pixelsize_z_km = pixelsize_km
 
     bz_xlen = data_bz.shape[1]
     bz_ylen = data_bz.shape[0]
