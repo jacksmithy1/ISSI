@@ -1,9 +1,9 @@
 import get_data
 import matplotlib.pyplot as plt
 import numpy as np
-import Seehafer
+import seehafer
 import plot_magnetogram
-import BField_model
+import bfield_model
 import datetime
 import os
 
@@ -89,7 +89,7 @@ beta0 = p0 / pB0  # photospheric plasma beta
 
 # plot_magnetogram.plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
-data_bz_Seehafer = Seehafer.mirror_magnetogram(
+data_bz_Seehafer = seehafer.mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
@@ -98,7 +98,7 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(
 # plot_magnetogram.plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
 
 
-B_Seehafer = BField_model.get_magnetic_field(
+B_Seehafer = bfield_model.get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -119,32 +119,64 @@ B_Seehafer = BField_model.get_magnetic_field(
     nf_max,
 )
 
-current_time = datetime.datetime.now()
+# current_time = datetime.datetime.now()
 
-dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
+# dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
-path = (
-    "/Users/lilli/Desktop/ISSI_data/B_ISSI_RMHD_tanh_"
-    + str(a)
-    + "_"
-    + str(b)
-    + "_"
-    + str(alpha)
-    + "_"
-    + str(nf_max)
-    + "_"
-    + dt_string
-    + ".npy"
-)
+# path = (
+#    "/Users/lilli/Desktop/ISSI_data/B_ISSI_RMHD_tanh_"
+#    + str(a)
+#    + "_"
+#    + str(b)
+#    + "_"
+#    + str(alpha)
+#    + "_"
+#    + str(nf_max)
+#    + "_"
+#    + dt_string
+#    + ".npy"
+# )
 
-with open(path, "wb") as file:
-    np.save(file, B_Seehafer)
+# with open(path, "wb") as file:
+#    np.save(file, B_Seehafer)
 
 # b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 # b_back_test = B_Seehafer[:, :, 0, 2]
 # plot_magnetogram.plot_magnetogram_boundary_3D(
 #    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
 # )
+"""
+boxedges = np.zeros((3, 2))
+resolutions = np.zeros((3))
+pixelsizes = np.zeros((2))
+L = 1.0
+boxedges[0, 0] = xmin
+boxedges[0, 1] = xmax
+boxedges[1, 0] = ymin
+boxedges[1, 1] = ymax
+boxedges[2, 0] = zmin
+boxedges[2, 1] = zmax
+resolutions[0] = nresol_x
+resolutions[1] = nresol_y
+resolutions[2] = nresol_z
+pixelsizes[0] = pixelsize_x
+pixelsizes[1] = pixelsize_y
+
+B_Seehafer = bfield_model_copy.bfield(
+    data_bz,
+    z0,
+    deltaz,
+    a,
+    b,
+    alpha,
+    boxedges,
+    resolutions,
+    pixelsizes,
+    nf_max,
+    L,
+    height_profile="tanh",
+)
+"""
 
 plot_magnetogram.plot_fieldlines_grid(
     B_Seehafer,

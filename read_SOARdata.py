@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plot_magnetogram
 import get_data
-import Seehafer
-import BField_model
+import seehafer
+import bfield_model
 
 
 # TO DO
@@ -24,7 +24,7 @@ path_blos = (
 with fits.open(path_blos) as data:
     # data.info()
     image_data = fits.getdata(path_blos, ext=0)
-    # print(image_data.shape)
+    print(image_data.shape)
     photo_data = image_data[500:1000, 400:1200]
     # with open(
     #    "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01_HEADER.txt",
@@ -33,8 +33,10 @@ with fits.open(path_blos) as data:
     #    for d in data:
     #        f.write(repr(d.header))
 
-plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
 
+plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
+plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
+exit()
 data = get_data.get_magnetogram_SOAR(photo_data)
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
@@ -55,12 +57,12 @@ zmin = data[12]
 zmax = data[13]
 z0 = data[14]
 
-print(nresol_x, nresol_y, nresol_z)
-print(xmin, ymin, zmin)
-print(xmax, ymax, zmax)
-print(pixelsize_x, pixelsize_y, pixelsize_z)
-print(z0)
-print(nf_max)
+# print(nresol_x, nresol_y, nresol_z)
+# print(xmin, ymin, zmin)
+# print(xmax, ymax, zmax)
+# print(pixelsize_x, pixelsize_y, pixelsize_z)
+# print(z0)
+# print(nf_max)
 
 a = 0.0
 alpha = 0.0
@@ -75,13 +77,13 @@ hmin = 0.0  # Minimum step length for fieldline3D
 hmax = 1.0  # Maximum step length for fieldline3D
 deltaz = z0 / 10.0  # Width of transitional region ca. 200km
 
-data_bz_Seehafer = Seehafer.mirror_magnetogram(
+data_bz_Seehafer = seehafer.mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
 # plot_magnetogram.plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
 
-B_Seehafer = BField_model.get_magnetic_field(
+B_Seehafer = bfield_model.get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,

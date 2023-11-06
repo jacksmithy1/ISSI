@@ -1,4 +1,4 @@
-import BField_model
+import bfield_model
 import numpy as np
 
 
@@ -34,8 +34,12 @@ def pres(ix, iy, iz, z, z0, deltaz, a, b, beta0, bz, h, T0, T1):
     Bzsqr = bz[iy, ix, iz] ** 2.0
     return (
         0.5 * beta0 * bpressure(z, z0, deltaz, h, T0, T1)
-        + Bzsqr * BField_model.f(z, z0, deltaz, a, b) / 2.0
+        + Bzsqr * bfield_model.f(z, z0, deltaz, a, b) / 2.0
     )
+
+
+def deltapres(ix, iy, iz, z, z0, deltaz, a, b, Bz):
+    return -bfield_model.f(z, z0, deltaz, a, b) * Bz[iy, ix, iz] ** 2.0 / 2.0
 
 
 def den(
@@ -46,12 +50,26 @@ def den(
     Bz = bz[iy, ix, iz]
     dBzdx = dBz[iy, ix, iz, 0]
     dBzdy = dBz[iy, ix, iz, 1]
-    dBzdz = dBz[iy, ix, iz, 1]
+    dBzdz = dBz[iy, ix, iz, 2]
     BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
     return (
         0.5 * beta0 / h * T0 / T_photosphere * bdensity(z, z0, deltaz, T0, T1, h)
-        + BField_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
-        + BField_model.f(z, z0, deltaz, a, b) * BdotgradBz
+        + bfield_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
+        + bfield_model.f(z, z0, deltaz, a, b) * BdotgradBz
+    )
+
+
+def deltaden(ix, iy, iz, z, z0, deltaz, a, b, bx, by, bz, dBz):
+    Bx = bx[iy, ix, iz]
+    By = by[iy, ix, iz]
+    Bz = bz[iy, ix, iz]
+    dBzdx = dBz[iy, ix, iz, 0]
+    dBzdy = dBz[iy, ix, iz, 1]
+    dBzdz = dBz[iy, ix, iz, 2]
+    BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
+    return (
+        bfield_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
+        + bfield_model.f(z, z0, deltaz, a, b) * BdotgradBz
     )
 
 

@@ -155,20 +155,20 @@ def plot_fieldlines_grid(
 
     current_time = datetime.datetime.now()
     dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
-    """
-    plotname = (
-        "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
-        + str(a)
-        + "_"
-        + str(b)
-        + "_"
-        + str(alpha)
-        + "_"
-        + str(nf_max)
-        + "_"
-        + dt_string
-        + ".png"
-    )
-    plt.savefig(plotname, dpi=300)
-    """
+
+    # plotname = (
+    #    "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
+    #    + str(a)
+    #    + "_"
+    #    + str(b)
+    #    + "_"
+    #    + str(alpha)
+    #    + "_"
+    #    + str(nf_max)
+    #    + "_"
+    #    + dt_string
+    #    + ".png"
+    # )
+    # plt.savefig(plotname, dpi=300)
+
     plt.show()

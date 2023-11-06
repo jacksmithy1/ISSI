@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import Seehafer
 import plot_magnetogram
-import BField_model
+import bfield_model
 import datetime
 import os
 
@@ -75,7 +75,7 @@ data_bz_Seehafer = Seehafer.mirror_magnetogram(
     data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
 )
 
-dBzd = BField_model.Bz_parderiv(
+dBzd = bfield_model.Bz_parderiv(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -97,11 +97,11 @@ dBzd = BField_model.Bz_parderiv(
     ffunc="Neukirch",
 )
 
-dBzdx = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 1]
-dBzdy = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 0]
+dBzdx = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 0]
+dBzdy = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 1]
 dBzdz = dBzd[nresol_y : 2 * nresol_y, nresol_x : 2 * nresol_x, :, 2]
 
-B_Seehafer = BField_model.get_magnetic_field(
+B_Seehafer = bfield_model.get_magnetic_field(
     data_bz_Seehafer,
     z0,
     deltaz,
@@ -147,103 +147,13 @@ t = np.zeros(nresol_z)
 
 for iz in range(0, nresol_z):
     z = Z[iz]
-    p[iz] = plasma_parameters.pres(
-        ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1
-    )
-    d[iz] = plasma_parameters.den(
-        ix,
-        iy,
-        iz,
-        z,
-        z0,
-        deltaz,
-        a,
-        b,
-        Bx,
-        By,
-        Bz,
-        dBzd,
-        beta0,
-        H,
-        T0,
-        T1,
-        T_photosphere,
-    )
-    t[iz] = plasma_parameters.temp(
-        ix,
-        iy,
-        iz,
-        z,
-        z0,
-        deltaz,
-        a,
-        b,
-        Bx,
-        By,
-        Bz,
-        dBzd,
-        beta0,
-        H,
-        T0,
-        T1,
-        T_photosphere,
+    p[iz] = plasma_parameters.deltapres(ix, iy, iz, z, z0, deltaz, a, b, Bz)
+    d[iz] = plasma_parameters.deltaden(
+        ix, iy, iz, z, z0, deltaz, a, b, Bx, By, Bz, dBzd
     )
 
-plt.plot(p, Z, label="Pressure")
-plt.plot(d, Z, label="Density")
-plt.plot(t, Z, label="Temperature")
+plt.plot(p, Z, label=" Delta Pressure")
+plt.plot(d, Z, label=" Delta Density")
+# plt.plot(t, Z, label="Temperature")
 plt.legend()
 plt.show()
-exit()
-
-p = np.zeros((nresol_y, nresol_x, nresol_z))
-d = np.zeros((nresol_y, nresol_x, nresol_z))
-t = np.zeros((nresol_y, nresol_x, nresol_z))
-
-for iz in range(0, nresol_z):
-    for ix in range(0, nresol_x):
-        for iy in range(0, nresol_y):
-            x = x_arr[ix]
-            y = y_arr[iy]
-            z = Z[iz]
-            p[iy, ix, iz] = plasma_parameters.pres(
-                ix, iy, iz, z, z0, deltaz, a, b, beta0, Bz, H, T0, T1
-            )
-            d[iy, ix, iz] = plasma_parameters.den(
-                ix,
-                iy,
-                iz,
-                z,
-                z0,
-                deltaz,
-                a,
-                b,
-                Bx,
-                By,
-                Bz,
-                dBzd,
-                beta0,
-                H,
-                T0,
-                T1,
-                T_photosphere,
-            )
-            t[iy, ix, iz] = plasma_parameters.temp(
-                ix,
-                iy,
-                iz,
-                z,
-                z0,
-                deltaz,
-                a,
-                b,
-                Bx,
-                By,
-                Bz,
-                dBzd,
-                beta0,
-                H,
-                T0,
-                T1,
-                T_photosphere,
-            )

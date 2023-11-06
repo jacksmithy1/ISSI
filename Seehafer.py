@@ -3,7 +3,7 @@ import numpy as np
 
 def mirror_magnetogram(data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y):
     data_bz_Seehafer = np.zeros(
-        (2 * nresol_y, 2 * nresol_x)
+        (int(2 * nresol_y), int(2 * nresol_x))
     )  # [0:2*nresol_y,0:2*nresol_x]
     # Y-axis size first as this corresponds to number of rows, then X-Axis size corresponding t number of columns
 
