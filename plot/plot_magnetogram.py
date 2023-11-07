@@ -4,11 +4,11 @@ from linetracer.fieldline3D import fieldline3d
 import datetime
 
 
-def plot_magnetogram_boundary(data_bz, nresol_x, nresol_y):
-    x_arr = np.arange(nresol_x) * (nresol_x) / (nresol_x - 1)
-    y_arr = np.arange(nresol_y) * (nresol_y) / (nresol_y - 1)
-    x_plot = np.outer(y_arr, np.ones(nresol_x))
-    y_plot = np.outer(x_arr, np.ones(nresol_y)).T
+def plot_magnetogram_boundary(data_bz, nresol_x: np.int16, nresol_y: np.int16):
+    x_arr: np.array[np.float64] = np.arange(nresol_x) * (nresol_x) / (nresol_x - 1)
+    y_arr: np.array[np.float64] = np.arange(nresol_y) * (nresol_y) / (nresol_y - 1)
+    x_plot: np.array[np.float64] = np.outer(y_arr, np.ones(nresol_x))
+    y_plot: np.array[np.float64] = np.outer(x_arr, np.ones(nresol_y)).T
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -19,10 +19,22 @@ def plot_magnetogram_boundary(data_bz, nresol_x, nresol_y):
 
 
 def plot_magnetogram_boundary_3D(
-    data_bz, nresol_x, nresol_y, xmin, xmax, ymin, ymax, zmin, zmax
+    data_bz,
+    nresol_x: np.int64,
+    nresol_y: np.int64,
+    xmin: np.float64,
+    xmax: np.float64,
+    ymin: np.float64,
+    ymax: np.float64,
+    zmin: np.float64,
+    zmax: np.float64,
 ):
-    X = np.arange(2 * nresol_x) * (xmax - xmin) / (2 * nresol_x - 1) + xmin
-    Y = np.arange(2 * nresol_y) * (ymax - ymin) / (2 * nresol_y - 1) + ymin
+    X: np.array[np.float64] = (
+        np.arange(2 * nresol_x) * (xmax - xmin) / (2 * nresol_x - 1) + xmin
+    )
+    Y: np.array[np.float64] = (
+        np.arange(2 * nresol_y) * (ymax - ymin) / (2 * nresol_y - 1) + ymin
+    )
     Xgrid, Ygrid = np.meshgrid(X, Y)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
@@ -46,29 +58,31 @@ def plot_magnetogram_boundary_3D(
 
 def plot_fieldlines_grid(
     data_b,
-    h1,
-    hmin,
-    hmax,
-    eps,
-    nresol_x,
-    nresol_y,
-    nresol_z,
-    xmin,
-    xmax,
-    ymin,
-    ymax,
-    zmin,
-    zmax,
-    a,
-    b,
-    alpha,
-    nf_max,
+    h1: np.float64,
+    hmin: np.float64,
+    hmax: np.float64,
+    eps: np.float64,
+    nresol_x: np.int16,
+    nresol_y: np.int16,
+    nresol_z: np.int16,
+    xmin: np.float64,
+    xmax: np.float64,
+    ymin: np.float64,
+    ymax: np.float64,
+    zmin: np.float64,
+    zmax: np.float64,
 ):
-    data_bz = data_b[:, :, 0, 2]
+    data_bz: np.array[np.float64] = data_b[:, :, 0, 2]
 
-    X = np.arange(2 * nresol_x) * (xmax - xmin) / (2 * nresol_x - 1) + xmin
-    Y = np.arange(2 * nresol_y) * (ymax - ymin) / (2 * nresol_y - 1) + ymin
-    Z = np.arange(nresol_z) * (zmax - zmin) / (nresol_z - 1) + zmin
+    X: np.array[np.float64] = (
+        np.arange(2 * nresol_x) * (xmax - xmin) / (2 * nresol_x - 1) + xmin
+    )
+    Y: np.array[np.float64] = (
+        np.arange(2 * nresol_y) * (ymax - ymin) / (2 * nresol_y - 1) + ymin
+    )
+    Z: np.array[np.float64] = (
+        np.arange(nresol_z) * (zmax - zmin) / (nresol_z - 1) + zmin
+    )
     Xgrid, Ygrid = np.meshgrid(X, Y)
 
     fig = plt.figure()
@@ -90,15 +104,15 @@ def plot_fieldlines_grid(
     ax.view_init(90, 270)
     ax.set_box_aspect((xmax, ymax, 1))
 
-    x_0 = 1.0 * 10**-8
-    y_0 = 1.0 * 10**-8
-    dx = 0.05
-    dy = 0.05
-    nlinesmaxx = int(np.floor(xmax / dx))
-    nlinesmaxy = int(np.floor(ymax / dy))
+    x_0: np.float64 = 1.0 * 10**-8
+    y_0: np.float64 = 1.0 * 10**-8
+    dx: np.float64 = 0.05
+    dy: np.float64 = 0.05
+    nlinesmaxx: np.int16 = int(np.floor(xmax / dx))
+    nlinesmaxy: np.int16 = int(np.floor(ymax / dy))
 
     # Limit fieldline plot to original data size (rather than Seehafer size)
-    boxedges = np.zeros((2, 3))
+    boxedges: np.array[np.float64] = np.zeros((2, 3))
 
     # Y boundaries must come first, X second due to switched order explained above
     boxedges[0, 0] = 0.0
@@ -110,13 +124,13 @@ def plot_fieldlines_grid(
 
     for ilinesx in range(0, nlinesmaxx):
         for ilinesy in range(0, nlinesmaxy):
-            x_start = x_0 + dx * ilinesx
-            y_start = y_0 + dy * ilinesy
+            x_start: np.float64 = x_0 + dx * ilinesx
+            y_start: np.float64 = y_0 + dy * ilinesy
 
             if data_bz[int(y_start), int(x_start)] < 0.0:
                 h1 = -h1
 
-            ystart = [y_start, x_start, 0.0]
+            ystart: np.array[np.float64] = [y_start, x_start, 0.0]
 
             # Fieldline3D expects startpt, BField, Row values, Column values so we need to give Y first, then X
             fieldline = fieldline3d(
@@ -136,9 +150,9 @@ def plot_fieldlines_grid(
             )  # , periodicity='xy')
 
             # Plot fieldlines
-            fieldline_x = np.zeros(len(fieldline))
-            fieldline_y = np.zeros(len(fieldline))
-            fieldline_z = np.zeros(len(fieldline))
+            fieldline_x: np.array[np.float64] = np.zeros(len(fieldline))
+            fieldline_y: np.array[np.float64] = np.zeros(len(fieldline))
+            fieldline_z: np.array[np.float64] = np.zeros(len(fieldline))
             fieldline_x[:] = fieldline[:, 0]
             fieldline_y[:] = fieldline[:, 1]
             fieldline_z[:] = fieldline[:, 2]

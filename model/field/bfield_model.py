@@ -1,27 +1,32 @@
 import numpy as np
-from datetime import datetime
-import time
 import scipy
-from utility.fft import fft_coeff_Seehafer
+from model.field.utility.fft import fft_coeff_seehafer
+from model.field.utility.seehafer import mirror_magnetogram
 
 
-def f(z, z0, deltaz, a, b):
+def f(
+    z: np.float64, z0: np.float64, deltaz: np.float64, a: np.float64, b: np.float64
+) -> np.float64:
     return a * (1.0 - b * np.tanh((z - z0) / deltaz))
 
 
-def f_low(z, a, kappa):
+def f_low(z: np.float64, a: np.float64, kappa: np.float64) -> np.float64:
     return a * np.exp(-kappa * z)
 
 
-def dfdz(z, z0, deltaz, a, b):
+def dfdz(
+    z: np.float64, z0: np.float64, deltaz: np.float64, a: np.float64, b: np.float64
+) -> np.float64:
     return -a * b / (deltaz * np.cosh((z - z0) / deltaz))
 
 
-def dfdz_low(z, a, kappa):
+def dfdz_low(z: np.float64, a: np.float64, kappa: np.float64) -> np.float64:
     return -kappa * a * np.exp(-kappa * z)
 
 
-def Phi_function(z, p, q, z0, deltaz):
+def Phi_function(
+    z: np.float64, p: np.float64, q: np.float64, z0: np.float64, deltaz: np.float64
+) -> np.float64:
     rplus = p / deltaz
     rminus = q / deltaz
 
@@ -39,7 +44,9 @@ def Phi_function(z, p, q, z0, deltaz):
     return dummy
 
 
-def DPhi_functionDz(z, p, q, z0, deltaz):
+def DPhi_functionDz(
+    z: np.float64, p: np.float64, q: np.float64, z0: np.float64, deltaz: np.float64
+) -> np.float64:
     rplus = p / deltaz
     rminus = q / deltaz
 
@@ -60,14 +67,18 @@ def DPhi_functionDz(z, p, q, z0, deltaz):
     return dummy
 
 
-def Phi_function_Bessel(z, p, q, z0, deltaz):
+def Phi_function_Bessel(
+    z: np.float64, p: np.float64, q: np.float64, z0: np.float64, deltaz: np.float64
+) -> np.float64:
     dummy = scipy.special.jv(p, q * np.exp(-z / (2.0 * deltaz)))
     dummy0 = scipy.special.jv(p, q)
 
     return dummy / dummy0
 
 
-def DPhi_functionDz_Bessel(z, p, q, z0, deltaz):
+def DPhi_functionDz_Bessel(
+    z: np.float64, p: np.float64, q: np.float64, z0: np.float64, deltaz: np.float64
+) -> np.float64:
     dummy = (
         q
         * np.exp(-z / (2.0 * deltaz))
@@ -81,25 +92,25 @@ def DPhi_functionDz_Bessel(z, p, q, z0, deltaz):
 
 
 def get_magnetic_field(
-    data_bz,
-    z0,
-    deltaz,
-    a,
-    b,
-    alpha,
-    xmin,
-    xmax,
-    ymin,
-    ymax,
-    zmin,
-    zmax,
-    nresol_x,
-    nresol_y,
-    nresol_z,
-    pixelsize_x,
-    pixelsize_y,
-    nf_max,
-    ffunc="Neukirch",
+    data: np.ndarray[np.float64],
+    z0: np.float64,
+    deltaz: np.float64,
+    a: np.float64,
+    b: np.float64,
+    alpha: np.float64,
+    xmin: np.float64,
+    xmax: np.float64,
+    ymin: np.float64,
+    ymax: np.float64,
+    zmin: np.float64,
+    zmax: np.float64,
+    nresol_x: np.int16,
+    nresol_y: np.int16,
+    nresol_z: np.int16,
+    pixelsize_x: np.float64,
+    pixelsize_y: np.float64,
+    nf_max: np.int16,
+    ffunc: str = "Neukirch",
 ):
     L_Seehafer = 2.0  # Normalising length scale for Seehafer
     L_x_Seehafer = (
@@ -117,8 +128,8 @@ def get_magnetic_field(
 
     # X and Y arrays for Seehafer (double length, different start point), Z stays the same
 
-    X_Seehafer = np.arange(2 * nresol_x) * (xmax - xmin) / (2 * nresol_x - 1) + xmin
-    Y_Seehafer = np.arange(2 * nresol_y) * (ymax - ymin) / (2 * nresol_y - 1) + ymin
+    X_Seehafer = np.arange(2 * nresol_x) * (xmax - -xmax) / (2 * nresol_x - 1) + -xmax
+    Y_Seehafer = np.arange(2 * nresol_y) * (ymax - -ymax) / (2 * nresol_y - 1) + -ymax
     Z = np.arange(nresol_z) * (zmax - zmin) / (nresol_z - 1) + zmin
 
     ratiodzL_Seehafer = deltaz / L_Seehafer  # Normalised deltaz
@@ -155,7 +166,8 @@ def get_magnetic_field(
         * np.sqrt(k2_arr_Seehafer * (1.0 - a + a * b) - alpha**2)
     )
 
-    anm, signal = fft_coeff_Seehafer(
+    data_bz = mirror_magnetogram(data, xmin, xmax, ymin, ymax, nresol_x, nresol_y)
+    anm, signal = fft_coeff_seehafer(
         data_bz, k2_arr_Seehafer, 2 * nresol_x, 2 * nresol_y, nf_max
     )
 
@@ -322,7 +334,7 @@ def Bz_parderiv(
         * np.sqrt(k2_arr_Seehafer * (1.0 - a + a * b) - alpha**2)
     )
 
-    anm, signal = fft_coeff_Seehafer(
+    anm, signal = fft_coeff_seehafer(
         data_bz, k2_arr_Seehafer, 2 * nresol_x, 2 * nresol_y, nf_max
     )
 

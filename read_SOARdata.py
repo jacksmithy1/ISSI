@@ -10,74 +10,41 @@ from plot.plot_magnetogram import (
     plot_magnetogram_boundary,
     plot_magnetogram_boundary_3D,
 )
-from utility.seehafer import mirror_magnetogram
 from model.field.bfield_model import get_magnetic_field
 import math
-from load.get_data import get_magnetogram_SOAR
+from load.get_data import read_fits_SOAR
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
 # Gar nicht mal so einfach
 
 # Magnetic field B Line Of Sight character
-path_blos = (
+path_blos: str = (
     "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01.fits"
 )
 
-with fits.open(path_blos) as data:
-    # data.info()
-    image_data = fits.getdata(path_blos, ext=0)
-    # print(image_data.shape)
-    photo_data = image_data[500:1000, 400:1200]
-    # with open(
-    #    "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01_HEADER.txt",
-    #    "w",
-    # ) as f:
-    #    for d in data:
-    #        f.write(repr(d.header))
-    hdr = data[0].header  # the primary HDU header
-    dist = hdr["DSUN_OBS"]
-    pixelsize_x_unit = hdr["CUNIT1"]
-    pixelsize_y_unit = hdr["CUNIT2"]
-    pixelsize_x_arcsec = hdr["CDELT1"]
-    pixelsize_y_arcsec = hdr["CDELT2"]
-
-    if not pixelsize_x_unit == pixelsize_y_unit:
-        print("Pixelsize units not matchy-matchy")
-        # return ValueError
-
-    if not pixelsize_x_arcsec == pixelsize_y_arcsec:
-        print("Data pixelsizes in x and y direction not matchy-matchy")
-        # return ValueError
-    else:
-        pixelsize_radians = pixelsize_x_arcsec / 206265.0
-
-    dist_km = dist / 1000.0
-
-    pixelsize_km = math.floor(pixelsize_radians * dist_km)
-
 # plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
 # plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
-# exit()
-data = get_magnetogram_SOAR(photo_data, pixelsize_km)
+
+data = read_fits_SOAR(path_blos)
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
-data_bz = data[0]
-nresol_x = data[1]
-nresol_y = data[2]
-nresol_z = data[3]
-pixelsize_x = data[4]
-pixelsize_y = data[5]
-pixelsize_z = data[6]
-nf_max = data[7]
-xmin = data[8]
-xmax = data[9]
-ymin = data[10]
-ymax = data[11]
-zmin = data[12]
-zmax = data[13]
-z0 = data[14]
+data_bz: np.ndarray[np.float64] = data[0]
+nresol_x: np.int16 = data[1]
+nresol_y: np.int16 = data[2]
+nresol_z: np.int16 = data[3]
+pixelsize_x: np.float64 = data[4]
+pixelsize_y: np.float64 = data[5]
+pixelsize_z: np.float64 = data[6]
+nf_max: np.int16 = data[7]
+xmin: np.float64 = data[8]
+xmax: np.float64 = data[9]
+ymin: np.float64 = data[10]
+ymax: np.float64 = data[11]
+zmin: np.float64 = data[12]
+zmax: np.float64 = data[13]
+z0: np.float64 = data[14]
 
 # print(nresol_x, nresol_y, nresol_z)
 # print(xmin, ymin, zmin)
@@ -86,9 +53,9 @@ z0 = data[14]
 # print(z0)
 # print(nf_max)
 
-a = 0.0
-alpha = 0.0
-b = 1.0
+a: np.float64 = 0.0
+alpha: np.float64 = 0.0
+b: np.float64 = 1.0
 
 T_photosphere = 5600.0  # temperature photosphere in Kelvin
 T_corona = 2.0 * 10.0**6.0  # temperature corona in Kelvin
@@ -99,22 +66,16 @@ hmin = 0.0  # Minimum step length for fieldline3D
 hmax = 1.0  # Maximum step length for fieldline3D
 deltaz = z0 / 10.0  # Width of transitional region ca. 200km
 
-data_bz_Seehafer = mirror_magnetogram(
-    data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
-)
-
-# plot_magnetogram_boundary(data_bz_Seehafer, 2 * nresol_x, 2 * nresol_y)
-
 B_Seehafer = get_magnetic_field(
-    data_bz_Seehafer,
+    data_bz,
     z0,
     deltaz,
     a,
     b,
     alpha,
-    -xmax,
+    xmin,
     xmax,
-    -ymax,
+    ymin,
     ymax,
     zmin,
     zmax,
@@ -147,8 +108,4 @@ plot_fieldlines_grid(
     ymax,
     zmin,
     zmax,
-    a,
-    b,
-    alpha,
-    nf_max,
 )

@@ -1,15 +1,11 @@
 from load.get_data import get_magnetogram
-import matplotlib.pyplot as plt
 import numpy as np
-from utility.seehafer import mirror_magnetogram
 from plot.plot_magnetogram import (
     plot_fieldlines_grid,
     plot_magnetogram_boundary,
     plot_magnetogram_boundary_3D,
 )
 from model.field.bfield_model import get_magnetic_field
-import datetime
-import os
 
 # TO DO
 
@@ -93,25 +89,16 @@ beta0 = p0 / pB0  # photospheric plasma beta
 
 # plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
-data_bz_Seehafer = mirror_magnetogram(
-    data_bz, xmin, xmax, ymin, ymax, nresol_x, nresol_y
-)
-
-# plot_magnetogram_boundary(data_bz_Seehafer, 2*nresol_x, 2*nresol_y)
-
-# plot_magnetogram_boundary_3D(data_bz_Seehafer, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax)
-
-
 B_Seehafer = get_magnetic_field(
-    data_bz_Seehafer,
+    data_bz,
     z0,
     deltaz,
     a,
     b,
     alpha,
-    -xmax,
+    xmin,
     xmax,
-    -ymax,
+    ymin,
     ymax,
     zmin,
     zmax,
@@ -197,8 +184,4 @@ plot_fieldlines_grid(
     ymax,
     zmin,
     zmax,
-    a,
-    b,
-    alpha,
-    nf_max,
 )

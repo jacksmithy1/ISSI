@@ -1,4 +1,4 @@
-from field import bfield_model
+from model.field import bfield_model
 import numpy as np
 
 
