@@ -71,6 +71,10 @@ def plot_fieldlines_grid(
     ymax: np.float64,
     zmin: np.float64,
     zmax: np.float64,
+    nf_max: np.int16,
+    a: np.float64,
+    b: np.float64,
+    alpha: np.float64,
 ):
     data_bz: np.array[np.float64] = data_b[:, :, 0, 2]
 
@@ -170,19 +174,19 @@ def plot_fieldlines_grid(
     current_time = datetime.datetime.now()
     dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
-    # plotname = (
-    #    "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
-    #    + str(a)
-    #    + "_"
-    #    + str(b)
-    #    + "_"
-    #    + str(alpha)
-    #    + "_"
-    #    + str(nf_max)
-    #    + "_"
-    #    + dt_string
-    #    + ".png"
-    # )
-    # plt.savefig(plotname, dpi=300)
+    plotname = (
+        "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
+        + str(a)
+        + "_"
+        + str(b)
+        + "_"
+        + str(alpha)
+        + "_"
+        + str(nf_max)
+        + "_"
+        + dt_string
+        + ".png"
+    )
+    plt.savefig(plotname, dpi=300)
 
     plt.show()

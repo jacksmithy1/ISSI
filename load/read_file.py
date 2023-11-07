@@ -191,10 +191,10 @@ def read_fits_SOAR(path: str, header=False):
         raise ValueError
 
     nresol_z = math.floor(
-        10000.0 / pixelsize_km
+        10000.0 / (pixelsize_km / 4.0)
     )  # Artifical upper boundary at 10Mm from photosphere
     z0_index = math.floor(
-        2000.0 / pixelsize_km
+        2000.0 / (pixelsize_km / 4.0)
     )  # Centre of region over which transition from NFF to FF takes place at 2Mm from photosphere
 
     if xmax == length_scale:

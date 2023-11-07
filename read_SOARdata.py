@@ -52,8 +52,8 @@ z0: np.float64 = data[14]
 # print(z0)
 # print(nf_max)
 
-a: np.float64 = 0.0
-alpha: np.float64 = 0.0
+a: np.float64 = 0.24
+alpha: np.float64 = 0.5
 b: np.float64 = 1.0
 
 T_photosphere = 5600.0  # temperature photosphere in Kelvin
@@ -107,4 +107,8 @@ plot_fieldlines_grid(
     ymax,
     zmin,
     zmax,
+    nf_max,
+    a,
+    b,
+    alpha,
 )

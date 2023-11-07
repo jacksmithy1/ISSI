@@ -28,8 +28,8 @@ z0: np.float64 = data[14]
 
 # Additional model parameters for tanh height profile
 deltaz = z0 / 10.0  # Width of transitional region ca. 200km
-a = 0.0
-alpha = 0.0
+a = 0.24
+alpha = 0.5
 b = 1.0
 
 # Background atmosphere
@@ -110,7 +110,7 @@ y_arr = np.arange(nresol_y) * (ymax - ymin) / (nresol_y - 1) + ymin
 z_arr = np.arange(nresol_z) * (zmax - zmin) / (nresol_z - 1) + zmin
 
 # Background Pressure, Density and Temperature
-
+print(z_arr)
 delta_p = np.zeros(nresol_z)
 delta_d = np.zeros(nresol_z)
 
@@ -125,10 +125,8 @@ for iz in range(0, nresol_z):
     delta_p[iz] = deltapres(z, z0, deltaz, a, b, bz)
     delta_d[iz] = deltaden(z, z0, deltaz, a, b, bz, bzdotgradbz, g)
 
-print(delta_p)
-exit()
-plt.plot(delta_p, z_arr, label="Background pressure")
-# plt.plot(delta_d, z_arr, label="Background density")
+plt.plot(z_arr, delta_p, label="Background pressure", linewidth=0.5)
+plt.plot(z_arr, delta_d, label="Background density", linewidth=0.5)
 
 plt.legend()
 plt.show()
