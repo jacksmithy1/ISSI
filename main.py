@@ -1,11 +1,11 @@
-from load.get_data import get_magnetogram
+from load.read_file import get_magnetogram
 import numpy as np
 from plot.plot_magnetogram import (
     plot_fieldlines_grid,
     plot_magnetogram_boundary,
     plot_magnetogram_boundary_3D,
 )
-from model.field.bfield_model import get_magnetic_field
+from model.field.bfield_model import magnetic_field
 
 # TO DO
 
@@ -89,7 +89,7 @@ beta0 = p0 / pB0  # photospheric plasma beta
 
 # plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
-B_Seehafer = get_magnetic_field(
+B_Seehafer = magnetic_field(
     data_bz,
     z0,
     deltaz,

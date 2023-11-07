@@ -1,8 +1,8 @@
-import astropy
-from astropy.io import fits
-import sunpy_soar
-from sunpy.net import Fido, attrs as a
-from astropy.time import Time
+# import astropy
+# from astropy.io import fits
+# import sunpy_soar
+# from sunpy.net import Fido, attrs as a
+# from astropy.time import Time
 import matplotlib.pyplot as plt
 import numpy as np
 from plot.plot_magnetogram import (
@@ -10,9 +10,8 @@ from plot.plot_magnetogram import (
     plot_magnetogram_boundary,
     plot_magnetogram_boundary_3D,
 )
-from model.field.bfield_model import get_magnetic_field
-import math
-from load.get_data import read_fits_SOAR
+from model.field.bfield_model import magnetic_field
+from load.read_file import read_fits_SOAR
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
@@ -66,7 +65,7 @@ hmin = 0.0  # Minimum step length for fieldline3D
 hmax = 1.0  # Maximum step length for fieldline3D
 deltaz = z0 / 10.0  # Width of transitional region ca. 200km
 
-B_Seehafer = get_magnetic_field(
+B_Seehafer = magnetic_field(
     data_bz,
     z0,
     deltaz,

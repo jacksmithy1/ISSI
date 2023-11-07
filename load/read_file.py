@@ -55,9 +55,9 @@ def get_magnetogram(path: str):
     nresol_y: np.int16 = bz_ylen
     L: np.array64 = 1.0
 
-    xmin: np.array64 = 0.0  # Minimum value of x in data length scale, not in Mm
-    ymin: np.array64 = 0.0  # Minimum value of y in data length scale, not in Mm
-    zmin: np.array64 = 0.0  # Minimum value of z in data length scale, not in Mm
+    xmin = 0.0  # Minimum value of x in data length scale, not in Mm
+    ymin = 0.0  # Minimum value of y in data length scale, not in Mm
+    zmin = 0.0  # Minimum value of z in data length scale, not in Mm
 
     if nresol_x < nresol_y:
         xmax = L  # Maximum value of x in data length scale, not in Mm
@@ -69,18 +69,14 @@ def get_magnetogram(path: str):
         xmax = L
         ymax = L
 
-    pixelsize_x: np.array64 = (
-        abs(xmax - xmin) / nresol_x
-    )  # Data pixel size in x direction
-    pixelsize_y: np.array64 = (
-        abs(ymax - ymin) / nresol_y
-    )  # Data pixel size in y direction
+    pixelsize_x = abs(xmax - xmin) / nresol_x  # Data pixel size in x direction
+    pixelsize_y = abs(ymax - ymin) / nresol_y  # Data pixel size in y direction
 
     if pixelsize_x != pixelsize_y:
         print("directional pixel sizes of data do not match")
         raise ValueError
 
-    nresol_z: np.int16 = math.floor(
+    nresol_z = math.floor(
         10000.0 / pixelsize
     )  # Artifical upper boundary at 10Mm outside of corona
     z0_index = math.floor(2000.0 / pixelsize)  # Height of Transition Region at 2Mm
@@ -92,15 +88,13 @@ def get_magnetogram(path: str):
         zmax = nresol_z / nresol_y
         z0 = z0_index / nresol_y
 
-    pixelsize_z: np.array64 = (
-        abs(zmax - zmin) / nresol_z
-    )  # Data pixel size in z direction
+    pixelsize_z = abs(zmax - zmin) / nresol_z  # Data pixel size in z direction
 
     if pixelsize_z != pixelsize_x:
         print("nresol_z and zmax do not match")
         raise ValueError
 
-    nf_max: np.int16 = min(nresol_x, nresol_y) - 1
+    nf_max = min(nresol_x, nresol_y) - 1
 
     return [
         data_bx,
@@ -123,20 +117,24 @@ def get_magnetogram(path: str):
     ]
 
 
-def read_fits_SOAR(path: str, header=0):
+def read_fits_SOAR(path: str, header=False):
     with fits.open(path) as data:
         # data.info()
         image = fits.getdata(path, ext=0)
         x_len = image.shape[0]
         y_len = image.shape[1]
-        plot_magnetogram_boundary(image, x_len, y_len)
-        x_start: np.int16 = int(input("First pixel x axis: "))
-        x_last: np.int16 = int(input("Last pixel x axis: "))
-        y_start: np.int16 = int(input("First pixel y axis: "))
-        y_last: np.int16 = int(input("Last pixel y axis: "))
+        # plot_magnetogram_boundary(image, x_len, y_len)
+        # x_start = int(input("First pixel x axis: "))
+        # x_last = int(input("Last pixel x axis: "))
+        # y_start = int(input("First pixel y axis: "))
+        # y_last = int(input("Last pixel y axis: "))
+        x_start = 400
+        x_last = 1200
+        y_start = 500
+        y_last = 1000
         cut_image = image[y_start:y_last, x_start:x_last]
         # plot_magnetogram_boundary(cut_image, x_last - x_start, y_last - y_start)
-        if header == 1:
+        if header == True:
             with open(
                 "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01_HEADER.txt",
                 "w",
@@ -158,37 +156,33 @@ def read_fits_SOAR(path: str, header=0):
             print("Data pixelsizes in x and y direction not matchy-matchy")
             raise ValueError
         else:
-            pixelsize_radians: np.float64 = pixelsize_x_arcsec / 206265.0
+            pixelsize_radians = pixelsize_x_arcsec / 206265.0
 
-    dist_km: np.float64 = dist / 1000.0
-    pixelsize_km: np.float64 = math.floor(pixelsize_radians * dist_km)
+    dist_km = dist / 1000.0
+    pixelsize_km = math.floor(pixelsize_radians * dist_km)
 
-    nresol_x: np.int16 = cut_image.shape[1]
-    nresol_y: np.int16 = cut_image.shape[0]
-    length_scale: np.float64 = 1.0  # L
+    nresol_x = cut_image.shape[1]
+    nresol_y = cut_image.shape[0]
+    length_scale = 1.0  # L
 
-    xmin: np.float64 = 0.0  # Minimum value of x in data length scale, not in Mm
-    ymin: np.float64 = 0.0  # Minimum value of y in data length scale, not in Mm
-    zmin: np.float64 = 0.0  # Minimum value of z in data length scale, not in Mm
+    xmin = 0.0  # Minimum value of x in data length scale, not in Mm
+    ymin = 0.0  # Minimum value of y in data length scale, not in Mm
+    zmin = 0.0  # Minimum value of z in data length scale, not in Mm
 
     if nresol_x < nresol_y:
-        xmax: np.float64 = (
-            length_scale  # Maximum value of x in data length scale, not in Mm
-        )
-        ymax: np.float64 = (
-            nresol_y / nresol_x
-        )  # Maximum value of y in data length scale, not in Mm
+        xmax = length_scale  # Maximum value of x in data length scale, not in Mm
+        ymax = nresol_y / nresol_x  # Maximum value of y in data length scale, not in Mm
     if nresol_y < nresol_x:
-        ymax: np.float64 = length_scale
-        xmax: np.float64 = nresol_x / nresol_y
+        ymax = length_scale
+        xmax = nresol_x / nresol_y
     if nresol_y == nresol_x:
-        xmax: np.float64 = length_scale
-        ymax: np.float64 = length_scale
+        xmax = length_scale
+        ymax = length_scale
 
-    pixelsize_x: np.float64 = (
+    pixelsize_x = (
         abs(xmax - xmin) / nresol_x
     )  # Data pixel size in x direction in relation to xmin and xmax
-    pixelsize_y: np.float64 = (
+    pixelsize_y = (
         abs(ymax - ymin) / nresol_y
     )  # Data pixel size in y direction in relation to ymin and ymax
 
@@ -199,18 +193,18 @@ def read_fits_SOAR(path: str, header=0):
     nresol_z = math.floor(
         10000.0 / pixelsize_km
     )  # Artifical upper boundary at 10Mm from photosphere
-    z0_index: np.int16 = math.floor(
+    z0_index = math.floor(
         2000.0 / pixelsize_km
     )  # Centre of region over which transition from NFF to FF takes place at 2Mm from photosphere
 
     if xmax == length_scale:
-        zmax: np.float64 = nresol_z / nresol_x
-        z0: np.float64 = z0_index / nresol_x
+        zmax = nresol_z / nresol_x
+        z0 = z0_index / nresol_x
     if ymax == length_scale:
-        zmax: np.float64 = nresol_z / nresol_y
-        z0: np.float64 = z0_index / nresol_y
+        zmax = nresol_z / nresol_y
+        z0 = z0_index / nresol_y
 
-    pixelsize_z: np.float64 = (
+    pixelsize_z = (
         abs(zmax - zmin) / nresol_z
     )  # Data pixel size in z direction in relation to zmin and zmax
 
@@ -235,7 +229,7 @@ def read_fits_SOAR(path: str, header=0):
     #    print("nresol_z and zmax do not match")
     #    raise ValueError
 
-    nf_max: np.int16 = min(nresol_x, nresol_y)
+    nf_max = min(nresol_x, nresol_y)
 
     return [
         cut_image,

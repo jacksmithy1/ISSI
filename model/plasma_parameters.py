@@ -1,5 +1,25 @@
-from model.field import bfield_model
 import numpy as np
+from model.field.utility.height_profile import f, dfdz
+
+# Need to read some papers
+
+
+def btemp_linear(z, temps, heights):
+    t1, t2, t3 = temps[0], temps[1], temps[2]
+    h1, h2, h3 = heights[0], heights[1], heights[2]
+
+    m1 = (t2 - t1) / (h2 - h1)
+    m2 = (t3 - t2) / (h3 - h2)
+
+    if z >= h1 and z <= h2:
+        t = t1 + m1 * (z - h1)
+    elif z >= h2 and z <= h3:
+        t = t2 + m2 * (z - h2)
+    else:
+        print("z= " + str(z) + " not in range")
+        raise ValueError
+
+    return t
 
 
 def bpressure(z, z0, deltaz, h, T0, T1):
@@ -25,7 +45,7 @@ def btemp(z, z0, deltaz, T0, T1):
     return T0 + T1 * np.tanh((z - z0) / deltaz)
 
 
-def bdensity(z, z0, deltaz, T0, T1, h):
+def bdensity(z, z0, deltaz, h, T0, T1):
     temp0 = btemp(z, z0, deltaz, T0, T1)
     return bpressure(z, z0, deltaz, h, T1, T0) / btemp(z, z0, deltaz, T0, T1) * temp0
 
@@ -34,12 +54,8 @@ def pres(ix, iy, iz, z, z0, deltaz, a, b, beta0, bz, h, T0, T1):
     Bzsqr = bz[iy, ix, iz] ** 2.0
     return (
         0.5 * beta0 * bpressure(z, z0, deltaz, h, T0, T1)
-        + Bzsqr * bfield_model.f(z, z0, deltaz, a, b) / 2.0
+        + Bzsqr * f(z, z0, deltaz, a, b) / 2.0
     )
-
-
-def deltapres(ix, iy, iz, z, z0, deltaz, a, b, Bz):
-    return -bfield_model.f(z, z0, deltaz, a, b) * Bz[iy, ix, iz] ** 2.0 / 2.0
 
 
 def den(
@@ -54,22 +70,8 @@ def den(
     BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
     return (
         0.5 * beta0 / h * T0 / T_photosphere * bdensity(z, z0, deltaz, T0, T1, h)
-        + bfield_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
-        + bfield_model.f(z, z0, deltaz, a, b) * BdotgradBz
-    )
-
-
-def deltaden(ix, iy, iz, z, z0, deltaz, a, b, bx, by, bz, dBz):
-    Bx = bx[iy, ix, iz]
-    By = by[iy, ix, iz]
-    Bz = bz[iy, ix, iz]
-    dBzdx = dBz[iy, ix, iz, 0]
-    dBzdy = dBz[iy, ix, iz, 1]
-    dBzdz = dBz[iy, ix, iz, 2]
-    BdotgradBz = Bx * dBzdx + By * dBzdy + Bz * dBzdz
-    return (
-        bfield_model.dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
-        + bfield_model.f(z, z0, deltaz, a, b) * BdotgradBz
+        + dfdz(z, z0, deltaz, a, b) * Bz**2.0 / 2.0
+        + f(z, z0, deltaz, a, b) * BdotgradBz
     )
 
 
@@ -97,6 +99,17 @@ def temp(
         T_photosphere,
     )
     return p / d
+
+
+def deltapres(z, z0, deltaz, a, b, bz):
+    return -f(z, z0, deltaz, a, b) * bz**2.0 / (8.0**np.pi)
+
+
+def deltaden(z, z0, deltaz, a, b, bz, bzdotgradbz, g):
+    return (
+        dfdz(z, z0, deltaz, a, b) * bz**2.0 / 2.0
+        + f(z, z0, deltaz, a, b) * bzdotgradbz
+    ) / (g * 4.0 * np.pi)
 
 
 # Something with derivative of Bz ugh
