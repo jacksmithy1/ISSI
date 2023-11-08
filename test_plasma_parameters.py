@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from model.plasma_parameters import deltapres, deltaden
 
-
 path_blos: str = (
     "/Users/lilli/Desktop/SOAR/obs/solo_L2_phi-hrt-blos_20220307T000609_V01.fits"
 )
@@ -114,6 +113,5 @@ for iz in range(0, nresol_z):
 
 plt.plot(z_arr, delta_p, label="Background pressure", linewidth=0.5)
 plt.plot(z_arr, delta_d, label="Background density", linewidth=0.5)
-
 plt.legend()
 plt.show()

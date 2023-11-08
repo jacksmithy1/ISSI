@@ -1,6 +1,6 @@
 import numpy as np
-from model.field.utility.fft import fft_coeff_seehafer
 from model.field.utility.seehafer import mirror_magnetogram
+from model.field.utility.fft import fft_coeff_seehafer
 from model.field.utility.poloidal import phi, phi_low, dphidz, dphidz_low
 
 
