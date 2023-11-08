@@ -3,7 +3,7 @@ from model.field.utility.height_profile import f, dfdz
 
 # Need to read some papers
 
-
+"""
 def btemp_linear(z, temps, heights):
     t1, t2, t3 = temps[0], temps[1], temps[2]
     h1, h2, h3 = heights[0], heights[1], heights[2]
@@ -99,13 +99,30 @@ def temp(
         T_photosphere,
     )
     return p / d
+"""
 
 
-def deltapres(z, z0, deltaz, a, b, bz):
+def deltapres(
+    z: np.float64,
+    z0: np.float64,
+    deltaz: np.float64,
+    a: float,
+    b: float,
+    bz: np.float64,
+) -> np.float64:
     return -f(z, z0, deltaz, a, b) * bz**2.0 / (8.0**np.pi)
 
 
-def deltaden(z, z0, deltaz, a, b, bz, bzdotgradbz, g):
+def deltaden(
+    z: np.float64,
+    z0: np.float64,
+    deltaz: np.float64,
+    a: float,
+    b: float,
+    bz: np.float64,
+    bzdotgradbz: np.float64,
+    g: float,
+) -> np.float64:
     return (
         dfdz(z, z0, deltaz, a, b) * bz**2.0 / 2.0
         + f(z, z0, deltaz, a, b) * bzdotgradbz
