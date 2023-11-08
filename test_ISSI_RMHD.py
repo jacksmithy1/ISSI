@@ -1,4 +1,4 @@
-from load.read_file import get_magnetogram
+from load.read_file import read_issi_RMHD
 import numpy as np
 from plot.plot_magnetogram import (
     plot_fieldlines_grid,
@@ -6,6 +6,7 @@ from plot.plot_magnetogram import (
     plot_magnetogram_boundary_3D,
 )
 from model.field.bfield_model import magnetic_field
+import scipy
 
 # TO DO
 
@@ -36,56 +37,42 @@ bnm     : array of Fourier coefficients of the sin(kx*x)*cos(ky*y) terms
 cnm     : array of Fourier coefficients of the cos(kx*x)*sin(ky*y) terms
 dnm     : array of Fourier coefficients of the cos(kx*x)*cos(ky*y) terms
 """
-a = 0.0
-alpha = 0.0
-b = 1.0
 
-T_photosphere = 5600.0  # temperature photosphere in Kelvin
-T_corona = 2.0 * 10.0**6.0  # temperature corona in Kelvin
-
-h1 = 0.0001  # Initial step length for fieldline3D
-eps = 1.0e-8  # Tolerance to which we require point on field line known for fieldline3D
-hmin = 0.0  # Minimum step length for fieldline3D
-hmax = 1.0  # Maximum step length for fieldline3D
-
-# data = get_data.get_magnetogram('Analytic_boundary_data.sav')
-
-data = get_magnetogram("data/RMHD_boundary_data.sav")
+data = read_issi_RMHD("data/RMHD_boundary_data.sav")
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
-data_bx = data[0]
-data_by = data[1]
-data_bz = data[2]
-nresol_x = data[3]
-nresol_y = data[4]
-nresol_z = data[5]
-pixelsize_x = data[6]
-pixelsize_y = data[7]
-pixelsize_z = data[8]
-nf_max = data[9]
-xmin = data[10]
-xmax = data[11]
-ymin = data[12]
-ymax = data[13]
-zmin = data[14]
-zmax = data[15]
-z0 = data[16]
+data_bx: np.ndarray[np.float64, np.dtype[np.float64]] = data.data_x
+data_by: np.ndarray[np.float64, np.dtype[np.float64]] = data.data_y
+data_bz: np.ndarray[np.float64, np.dtype[np.float64]] = data.data_z
+nresol_x: int = data.nresol_x
+nresol_y: int = data.nresol_y
+nresol_z: int = data.nresol_z
+pixelsize_x: np.float64 = data.pixelsize_x
+pixelsize_y: np.float64 = data.pixelsize_y
+pixelsize_z: np.float64 = data.pixelsize_z
+nf_max: int = data.nf_max
+xmin: np.float64 = data.xmin
+xmax: np.float64 = data.xmax
+ymin: np.float64 = data.ymin
+ymax: np.float64 = data.ymax
+zmin: np.float64 = data.zmin
+zmax: np.float64 = data.zmax
+z0: np.float64 = data.z0
 
-deltaz = z0 / 10.0  # Width of transitional region ca. 200km
+a: float = 0.24
+alpha: float = 0.5
+b: float = 1.0
 
-T0 = (T_photosphere + T_corona * np.tanh(z0 / deltaz)) / (1.0 + np.tanh(z0 / deltaz))
-T1 = (T_corona - T_photosphere) / (1.0 + np.tanh(z0 / deltaz))
-g_solar = 274.0  # in m/s^2
-mbar = 1.0  # photospheric mean molecular weight, as multiples of proton mass
-H = 1.3807 * T0 / (mbar * 1.6726 * g_solar) * 0.001
-rho0 = 3.0 - 4  # photospheric mass density in kg/m^3
-B0 = 500.0  # normalising photospheric B-field in Gauss
-p0 = (
-    1.3807 * T_photosphere * rho0 / (mbar * 1.6726) * 1.0
-)  # photospheric plasma pressure in Pascal
-pB0 = 3.9789 - 3 * B0**2.0  # photospheric magnetic pressure in Pascal
-beta0 = p0 / pB0  # photospheric plasma beta
+h1: float = 0.0001  # Initial step length for fieldline3D
+eps: float = 1.0e-8
+# Tolerance to which we require point on field line known for fieldline3D
+hmin: float = 0.0  # Minimum step length for fieldline3D
+hmax: float = 1.0  # Maximum step length for fieldline3D
+
+deltaz: np.float64 = np.float64(
+    z0 / 10.0
+)  # z0 at 2Mm so widht of transition region = 200km
 
 # plot_magnetogram_boundary(data_bz, nresol_x, nresol_y)
 
@@ -136,38 +123,6 @@ B_Seehafer = magnetic_field(
 # plot_magnetogram_boundary_3D(
 #    b_back_test, nresol_x, nresol_y, -xmax, xmax, -ymax, ymax, zmin, zmax
 # )
-"""
-boxedges = np.zeros((3, 2))
-resolutions = np.zeros((3))
-pixelsizes = np.zeros((2))
-L = 1.0
-boxedges[0, 0] = xmin
-boxedges[0, 1] = xmax
-boxedges[1, 0] = ymin
-boxedges[1, 1] = ymax
-boxedges[2, 0] = zmin
-boxedges[2, 1] = zmax
-resolutions[0] = nresol_x
-resolutions[1] = nresol_y
-resolutions[2] = nresol_z
-pixelsizes[0] = pixelsize_x
-pixelsizes[1] = pixelsize_y
-
-B_Seehafer = bfield_model_copy.bfield(
-    data_bz,
-    z0,
-    deltaz,
-    a,
-    b,
-    alpha,
-    boxedges,
-    resolutions,
-    pixelsizes,
-    nf_max,
-    L,
-    height_profile="tanh",
-)
-"""
 
 plot_fieldlines_grid(
     B_Seehafer,

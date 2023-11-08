@@ -12,6 +12,7 @@ from plot.plot_magnetogram import (
 )
 from model.field.bfield_model import magnetic_field
 from load.read_file import read_fits_SOAR
+from classes.clsmod import DataBz
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
@@ -25,45 +26,39 @@ path_blos: str = (
 # plot_magnetogram.plot_magnetogram_boundary(image_data, 2048, 2048)
 # plot_magnetogram.plot_magnetogram_boundary(photo_data, 800, 500)
 
-data = read_fits_SOAR(path_blos)
+data: DataBz = read_fits_SOAR(path_blos)
 
 # BFieldvec_Seehafer = np.load('field_data_potential.npy')
 
-data_bz: np.ndarray[np.float64] = data[0]
-nresol_x: np.int16 = data[1]
-nresol_y: np.int16 = data[2]
-nresol_z: np.int16 = data[3]
-pixelsize_x: np.float64 = data[4]
-pixelsize_y: np.float64 = data[5]
-pixelsize_z: np.float64 = data[6]
-nf_max: np.int16 = data[7]
-xmin: np.float64 = data[8]
-xmax: np.float64 = data[9]
-ymin: np.float64 = data[10]
-ymax: np.float64 = data[11]
-zmin: np.float64 = data[12]
-zmax: np.float64 = data[13]
-z0: np.float64 = data[14]
+data_bz: np.ndarray[np.float64, np.dtype[np.float64]] = data.data_z
+nresol_x: int = data.nresol_x
+nresol_y: int = data.nresol_y
+nresol_z: int = data.nresol_z
+pixelsize_x: np.float64 = data.pixelsize_x
+pixelsize_y: np.float64 = data.pixelsize_y
+pixelsize_z: np.float64 = data.pixelsize_z
+nf_max: int = data.nf_max
+xmin: np.float64 = data.xmin
+xmax: np.float64 = data.xmax
+ymin: np.float64 = data.ymin
+ymax: np.float64 = data.ymax
+zmin: np.float64 = data.zmin
+zmax: np.float64 = data.zmax
+z0: np.float64 = data.z0
 
-# print(nresol_x, nresol_y, nresol_z)
-# print(xmin, ymin, zmin)
-# print(xmax, ymax, zmax)
-# print(pixelsize_x, pixelsize_y, pixelsize_z)
-# print(z0)
-# print(nf_max)
+a: float = 0.24
+alpha: float = 0.5
+b: float = 1.0
 
-a: np.float64 = 0.24
-alpha: np.float64 = 0.5
-b: np.float64 = 1.0
+h1: float = 0.0001  # Initial step length for fieldline3D
+eps: float = 1.0e-8
+# Tolerance to which we require point on field line known for fieldline3D
+hmin: float = 0.0  # Minimum step length for fieldline3D
+hmax: float = 1.0  # Maximum step length for fieldline3D
 
-T_photosphere = 5600.0  # temperature photosphere in Kelvin
-T_corona = 2.0 * 10.0**6.0  # temperature corona in Kelvin
-
-h1 = 0.0001  # Initial step length for fieldline3D
-eps = 1.0e-8  # Tolerance to which we require point on field line known for fieldline3D
-hmin = 0.0  # Minimum step length for fieldline3D
-hmax = 1.0  # Maximum step length for fieldline3D
-deltaz = z0 / 10.0  # Width of transitional region ca. 200km
+deltaz: np.float64 = np.float64(
+    z0 / 10.0
+)  # z0 at 2Mm so widht of transition region = 200km
 
 B_Seehafer = magnetic_field(
     data_bz,
@@ -107,8 +102,4 @@ plot_fieldlines_grid(
     ymax,
     zmin,
     zmax,
-    nf_max,
-    a,
-    b,
-    alpha,
 )

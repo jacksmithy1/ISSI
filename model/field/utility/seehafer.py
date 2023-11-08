@@ -2,16 +2,16 @@ import numpy as np
 
 
 def mirror_magnetogram(
-    data_bz,
+    data_bz: np.ndarray[np.float64, np.dtype[np.float64]],
     xmin: np.float64,
     xmax: np.float64,
     ymin: np.float64,
     ymax: np.float64,
-    nresol_x: np.int16,
-    nresol_y: np.int16,
-):
-    b_arr = np.zeros(
-        (int(2 * nresol_y), int(2 * nresol_x))
+    nresol_x: int,
+    nresol_y: int,
+) -> np.ndarray[np.float64, np.dtype[np.float64]]:
+    b_arr: np.ndarray[np.float64, np.dtype[np.float64]] = np.zeros(
+        (2 * nresol_y, 2 * nresol_x)
     )  # [0:2*nresol_y,0:2*nresol_x]
     # Y-axis size first as this corresponds to number of rows, then X-Axis size corresponding t number of columns
 
