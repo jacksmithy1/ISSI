@@ -326,7 +326,7 @@ def bz_partial_derivatives(
     cos_y: np.ndarray[np.float64, np.dtype[np.float64]] = np.cos(
         np.outer(ky_arr, y_arr)
     )
-    """
+
     for iz in range(0, nresol_z):
         coeffs: np.ndarray[np.float64, np.dtype[np.float64]] = np.multiply(
             np.multiply(k2_arr, dphidz_arr[:, :, iz]), anm
@@ -362,4 +362,5 @@ def bz_partial_derivatives(
     bz_derivs[:, :, :, 1] = np.einsum(
         "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs2, cos_x), cos_y
     )
+    """
     return bz_derivs
