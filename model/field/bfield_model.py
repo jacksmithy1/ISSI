@@ -36,11 +36,9 @@ def magnetic_field(
     # Normalised length scale in y direction for Seehafer
 
     if xmin != 0.0 or ymin != 0.0 or zmin != 0.0:
-        print("Magnotgram not centred at origin")
-        raise ValueError
+        raise ValueError("Magnotgram not centred at origin")
     if not (xmax > 0.0 or ymax > 0.0 or zmax > 0.0):
-        print("Magnetrogram in wrong quadrant of Seehafer mirroring")
-        raise ValueError
+        raise ValueError("Magnetrogram in wrong quadrant of Seehafer mirroring")
 
     x_arr: np.ndarray[np.float64, np.dtype[np.float64]] = (
         np.arange(2.0 * nresol_x) * 2.0 * xmax / (2.0 * nresol_x - 1) - xmax
@@ -120,11 +118,6 @@ def magnetic_field(
         (2 * nresol_y, 2 * nresol_x, nresol_z, 3)
     )
 
-    # sin_x = np.zeros((2 * nresol_x, nf_max))  # [0:2*nresol_x, 0:nf_max]
-    # sin_y = np.zeros((2 * nresol_y, nf_max))  # [0:2*nresol_y, 0:nf_max]
-    # cos_x = np.zeros((2 * nresol_x, nf_max))  # [0:2*nresol_x, 0:nf_max]
-    # cos_y = np.zeros((2 * nresol_y, nf_max))  # [0:2*nresol_y, 0:nf_max]
-
     sin_x: np.ndarray[np.float64, np.dtype[np.float64]] = np.sin(
         np.outer(kx_arr, x_arr)
     )
@@ -174,7 +167,37 @@ def magnetic_field(
             cos_y.T, np.matmul(coeffs4, sin_x)
         )
         # [0:2*nresol_y, 0:nf_max]*([0:nf_max, 0:nf_max]*[0:nf_max, 0:2*nresol_x]) = [0:2*nresol_y, 0:2*nresol_x]
+    """
 
+    coeffs = (k2_arr[:, :, np.newaxis] * phi_arr) * anm[:, :, np.newaxis]
+    # m_mat = np.einsum("nmk,mj->jnk", coeffs, sin_x)
+    # b_arr[:, :, :, 2] = np.einsum("jnk,ni->ijk", m_mat, sin_y)
+    b_arr[:, :, :, 2] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs, sin_x), sin_y
+    )
+
+    coeffs1 = (anm[:, :, np.newaxis] * dphidz_arr) * ky_grid[:, :, np.newaxis]
+    coeffs2 = alpha * (anm[:, :, np.newaxis] * phi_arr) * kx_grid[:, :, np.newaxis]
+    # m_mat1 = np.einsum("nmk,mj->jnk", coeffs1, sin_x)
+    # m_mat2 = np.einsum("nmk,mj->jnk", coeffs2, cos_x)
+    # b_arr[:, :, :, 0] = np.einsum("jnk,ni->ijk", m_mat1, cos_y) - np.einsum(
+    #    "jnk,ni->ijk", m_mat2, sin_y
+    # )
+    b_arr[:, :, :, 0] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs1, sin_x), cos_y
+    ) - np.einsum("jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs2, cos_x), sin_y)
+
+    coeffs3 = (anm[:, :, np.newaxis] * dphidz_arr) * kx_grid[:, :, np.newaxis]
+    coeffs4 = alpha * (anm[:, :, np.newaxis] * phi_arr) * ky_grid[:, :, np.newaxis]
+    # m_mat3 = np.einsum("nmk,mj->jnk", coeffs3, cos_x)
+    # m_mat4 = np.einsum("nmk,mj->jnk", coeffs4, sin_x)
+    # b_arr[:, :, :, 1] = np.einsum("jnk,ni->ijk", m_mat3, sin_y) + np.einsum(
+    #    "jnk,ni->ijk", m_mat4, cos_y
+    # )
+    b_arr[:, :, :, 1] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs3, cos_x), sin_y
+    ) + np.einsum("jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs4, sin_x), cos_y)
+    """
     return b_arr
 
 
@@ -210,11 +233,9 @@ def bz_partial_derivatives(
     # Normalised length scale in y direction for Seehafer
 
     if xmin != 0.0 or ymin != 0.0 or zmin != 0.0:
-        print("Magnotgram not centred at origin")
-        raise ValueError
+        raise ValueError("Magnotgram not centred at origin")
     if not (xmax > 0.0 or ymax > 0.0 or zmax > 0.0):
-        print("Magnetrogram in wrong quadrant of Seehafer mirroring")
-        raise ValueError
+        raise ValueError("Magnetrogram in wrong quadrant of Seehafer mirroring")
 
     x_arr: np.ndarray[np.float64, np.dtype[np.float64]] = (
         np.arange(2.0 * nresol_x) * 2.0 * xmax / (2.0 * nresol_x - 1) - xmax
@@ -293,11 +314,6 @@ def bz_partial_derivatives(
         (2 * nresol_y, 2 * nresol_x, nresol_z, 3)
     )
 
-    # sin_x = np.zeros((2 * nresol_x, nf_max))  # [0:2*nresol_x, 0:nf_max]
-    # sin_y = np.zeros((2 * nresol_y, nf_max))  # [0:2*nresol_y, 0:nf_max]
-    # cos_x = np.zeros((2 * nresol_x, nf_max))  # [0:2*nresol_x, 0:nf_max]
-    # cos_y = np.zeros((2 * nresol_y, nf_max))  # [0:2*nresol_y, 0:nf_max]
-
     sin_x: np.ndarray[np.float64, np.dtype[np.float64]] = np.sin(
         np.outer(kx_arr, x_arr)
     )
@@ -310,7 +326,7 @@ def bz_partial_derivatives(
     cos_y: np.ndarray[np.float64, np.dtype[np.float64]] = np.cos(
         np.outer(ky_arr, y_arr)
     )
-
+    """
     for iz in range(0, nresol_z):
         coeffs: np.ndarray[np.float64, np.dtype[np.float64]] = np.multiply(
             np.multiply(k2_arr, dphidz_arr[:, :, iz]), anm
@@ -327,5 +343,23 @@ def bz_partial_derivatives(
             ky_grid,
         )
         bz_derivs[:, :, iz, 1] = np.matmul(cos_y.T, np.matmul(coeffs3, sin_x))
+    """
+    coeffs = (k2_arr[:, :, np.newaxis] * dphidz_arr) * anm[:, :, np.newaxis]
+    bz_derivs[:, :, :, 2] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs, sin_x), sin_y
+    )
 
+    coeffs1 = ((k2_arr[:, :, np.newaxis] * phi_arr) * anm[:, :, np.newaxis]) * kx_grid[
+        :, :, np.newaxis
+    ]
+    bz_derivs[:, :, :, 2] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs1, cos_x), sin_y
+    )
+
+    coeffs2 = ((k2_arr[:, :, np.newaxis] * phi_arr) * anm[:, :, np.newaxis]) * ky_grid[
+        :, :, np.newaxis
+    ]
+    bz_derivs[:, :, :, 1] = np.einsum(
+        "jnk,ni->ijk", np.einsum("nmk,mj->jnk", coeffs2, cos_x), cos_y
+    )
     return bz_derivs

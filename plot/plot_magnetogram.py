@@ -187,7 +187,7 @@ def plot_fieldlines_grid(
     # dt_string = current_time.strftime("%d-%m-%Y_%H-%M-%S")
 
     # plotname = (
-    #    "/Users/lilli/Desktop/ISSI_plots/fieldlines3D_"
+    #    "/Users/lilli/Desktop/ISSI_code/output/fieldlines3D_"
     #    + str(a)
     #    + "_"
     #    + str(b)

@@ -13,6 +13,9 @@ from plot.plot_magnetogram import (
 from model.field.bfield_model import magnetic_field
 from load.read_file import read_fits_SOAR
 from classes.clsmod import DataBz
+import time
+
+start_time = time.time()
 
 # TO DO
 # Extract boundary magnetic field vector from Magnetogram
@@ -80,6 +83,10 @@ B_Seehafer = magnetic_field(
     pixelsize_y,
     nf_max,
 )
+end_time = time.time()
+execution_time = end_time - start_time
+
+print(f"Execution time: {execution_time} seconds")
 
 # b_back_test = np.zeros((2 * nresol_y, 2 * nresol_x))
 # b_back_test = B_Seehafer[:, :, 0, 2]
